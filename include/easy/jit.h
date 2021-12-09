@@ -5,6 +5,7 @@
 #include <easy/attributes.h>
 #include <easy/param.h>
 #include <easy/function_wrapper.h>
+#include <easy/runtime/BitcodeTracker.h>
 
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
@@ -78,23 +79,14 @@ auto EASY_JIT_COMPILER_INTERFACE jit(T &&Fun, Args&& ... args) {
   return jit_with_context<T, Args...>(C, std::forward<T>(Fun));
 }
 
-template<class T, class ... Args> std::unique_ptr<llvm::Module> EASY_JIT_COMPILER_INTERFACE easy_jit(T &&Fun, Args&& ... args) 
+template<typename T, typename... Args>
+std::unique_ptr<llvm::Module> EASY_JIT_COMPILER_INTERFACE get_module(llvm::LLVMContext& ctx, T&& fn, Args&&... args)
 {
-    auto easy_ctx = get_context_for<T, Args...>(std::forward<Args>(args)...);
-    auto* func_ptr = meta::get_as_pointer(Fun);
-    std::unique_ptr<easy::Function> easy_function = Function::Compile(reinterpret_cast<void*>(func_ptr), easy_ctx);
-    llvm::Module const & M = easy_function->getLLVMModule();
-    std::unique_ptr<llvm::Module> llmod = llvm::CloneModule(M);
-    easy_function.release();
-
-    for (llvm::Function & func: *llmod){
-        func.addFnAttr(llvm::Attribute::AlwaysInline);
-        func.removeFnAttr(llvm::Attribute::OptimizeNone);
-    }
-
-    return llmod;
+    auto &BT = BitcodeTracker::GetTracker();
+    auto* fn_ptr = reinterpret_cast<void*>(meta::get_as_pointer(fn));
+    auto mod = BT.getModuleWithContext(fn_ptr, ctx);
+    return mod;
 }
-
 
 }
 
