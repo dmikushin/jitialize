@@ -53,6 +53,7 @@ add_subdirectory(include)
 add_subdirectory(pass)
 add_subdirectory(runtime)
 add_subdirectory(doc)
+add_subdirectory(benchmark)
 
 add_custom_target(easy-jit-core DEPENDS EasyJitPass EasyJitRuntime)
 

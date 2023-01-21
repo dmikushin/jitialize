@@ -23,7 +23,7 @@ cmake --build .
 ## Example usage
 
 To build the examples, install the [opencv](https://opencv.org/) library, 
-and add the flags `-DEASY_JIT_EXAMPLE=1` to the cmake command:
+and add the flag `-DEASY_JIT_EXAMPLE=1` to the CMake command:
 
 ```bash
 sudo apt install libopencv-dev
@@ -35,12 +35,16 @@ bin/easyjit-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
 
 ## Benchmarking
 
-To enable benchmarking, install the [google benchmark](https://github.com/google/benchmark) framework, 
-and add the flags `-DEASY_JIT_BENCHMARK=1 -DBENCHMARK_DIR=<path_to_google_benchmark_install>` to the cmake command.
+To enable benchmarking, add the flag `-DEASY_JIT_BENCHMARK=1` to the CMake command:
 
-Everything is ready to go!
+```bash
+cd build
+cmake -DEASY_JIT_BENCHMARK=ON ..
+make
+bin/easyjit-benchmark
+```
 
-### Docker
+## Docker
 
 If you want to give only a quick test to the project, everything is provided to use it with docker.
 To do this, generate a Dockerfile from the current directory using the scripts in `<path_to_easy_jit_src>/misc/docker`, 
