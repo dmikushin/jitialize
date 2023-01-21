@@ -17,7 +17,7 @@ elseif (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
 	add_definitions(-D_AARCH64)
 endif()
 
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM CONFIG REQUIRED PATHS "/usr/lib/llvm-12/lib/cmake" NO_DEFAULT_PATH)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in ${LLVM_DIR}")
 message(STATUS "LLVM Root: ${LLVM_TOOLS_BINARY_DIR}")
@@ -25,6 +25,7 @@ message(STATUS "LLVM Include dirs: ${LLVM_INCLUDE_DIRS}")
 
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(AddLLVM)
+set(Python_FIND_VERSION 3)
 include(Python)
 
 add_definitions(${LLVM_DEFINITIONS})
