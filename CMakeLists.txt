@@ -18,6 +18,7 @@ elseif (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
 endif()
 
 find_package(LLVM CONFIG REQUIRED PATHS "/usr/lib/llvm-12/lib/cmake" NO_DEFAULT_PATH)
+find_package(Clang CONFIG REQUIRED PATHS "/usr/lib/llvm-12/lib/cmake" NO_DEFAULT_PATH)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in ${LLVM_DIR}")
 message(STATUS "LLVM Root: ${LLVM_TOOLS_BINARY_DIR}")
@@ -51,6 +52,7 @@ add_subdirectory(cmake)
 add_subdirectory(include)
 add_subdirectory(pass)
 add_subdirectory(runtime)
+add_subdirectory(doc)
 
 add_custom_target(easy-jit-core DEPENDS EasyJitPass EasyJitRuntime)
 

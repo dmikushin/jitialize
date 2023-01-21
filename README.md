@@ -30,6 +30,7 @@ sudo apt install libopencv-dev
 cd build
 cmake -DEASY_JIT_EXAMPLE=ON ..
 make
+bin/easyjit-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
 ```
 
 ## Benchmarking
