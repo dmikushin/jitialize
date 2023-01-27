@@ -7,7 +7,7 @@
 
 using namespace llvm;
 
-void easy::MayAliasTracer::mayAliasWithStoredValues(Value* V, VSet &Loaded, VSet &Stored) {
+void jitialize::MayAliasTracer::mayAliasWithStoredValues(Value* V, VSet &Loaded, VSet &Stored) {
   if(!Stored.insert(V).second)
     return;
   if(auto* GO = dyn_cast<GlobalObject>(V))
@@ -30,7 +30,7 @@ void easy::MayAliasTracer::mayAliasWithStoredValues(Value* V, VSet &Loaded, VSet
   }
 }
 
-void easy::MayAliasTracer::mayAliasWithLoadedValues(Value * V, VSet &Loaded, VSet &Stored) {
+void jitialize::MayAliasTracer::mayAliasWithLoadedValues(Value * V, VSet &Loaded, VSet &Stored) {
   if(!Loaded.insert(V).second)
     return;
   if(auto* GO = dyn_cast<GlobalObject>(V))

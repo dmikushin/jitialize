@@ -1,13 +1,13 @@
 #ifndef CACHE
 #define CACHE
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 #include <unordered_map>
 
-namespace easy {
+namespace jitialize {
 
 namespace {
-using AutoKey = std::pair<void*, easy::Context>;
+using AutoKey = std::pair<void*, jitialize::Context>;
 
 template<class KeyTy>
 class CacheBase {
@@ -18,16 +18,16 @@ class CacheBase {
 
   protected:
 
-  std::unordered_map<Key, easy::FunctionWrapperBase> Cache_;
-  using iterator = typename std::unordered_map<Key, easy::FunctionWrapperBase>::iterator;
+  std::unordered_map<Key, jitialize::FunctionWrapperBase> Cache_;
+  using iterator = typename std::unordered_map<Key, jitialize::FunctionWrapperBase>::iterator;
 
   template<class T, class ... Args>
   auto const & compile_if_not_in_cache(std::pair<iterator, bool> &CacheEntry, T &&Fun, Args&& ... args) {
-    using wrapper_ty = decltype(easy::jit(std::forward<T>(Fun), std::forward<Args>(args)...));
+    using wrapper_ty = decltype(jitialize::jit(std::forward<T>(Fun), std::forward<Args>(args)...));
 
     FunctionWrapperBase &FWB = CacheEntry.first->second;
     if(CacheEntry.second) {
-      auto FW = easy::jit(std::forward<T>(Fun), std::forward<Args>(args)...);
+      auto FW = jitialize::jit(std::forward<T>(Fun), std::forward<Args>(args)...);
       FWB = std::move(FW);
     }
     return reinterpret_cast<wrapper_ty&>(FWB);

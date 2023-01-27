@@ -1,9 +1,9 @@
-#include <easy/runtime/BitcodeTracker.h>
-#include <easy/runtime/Function.h>
-#include <easy/runtime/RuntimePasses.h>
-#include <easy/runtime/LLVMHolderImpl.h>
-#include <easy/runtime/Utils.h>
-#include <easy/exceptions.h>
+#include <jitialize/runtime/BitcodeTracker.h>
+#include <jitialize/runtime/Function.h>
+#include <jitialize/runtime/RuntimePasses.h>
+#include <jitialize/runtime/LLVMHolderImpl.h>
+#include <jitialize/runtime/Utils.h>
+#include <jitialize/exceptions.h>
 
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
@@ -22,11 +22,11 @@
 #endif
 
 
-using namespace easy;
+using namespace jitialize;
 
-namespace easy {
-  DefineEasyException(ExecutionEngineCreateError, "Failed to create execution engine for:");
-  DefineEasyException(CouldNotOpenFile, "Failed to file to dump intermediate representation.");
+namespace jitialize {
+  DefineJitializeException(ExecutionEngineCreateError, "Failed to create execution engine for:");
+  DefineJitializeException(CouldNotOpenFile, "Failed to file to dump intermediate representation.");
 }
 
 Function::Function(void* Addr, std::unique_ptr<LLVMHolder> H)
@@ -38,7 +38,7 @@ static std::unique_ptr<llvm::TargetMachine> GetHostTargetMachine() {
   return TM;
 }
 
-static void Optimize(llvm::Module& M, const char* Name, const easy::Context& C, unsigned OptLevel, unsigned OptSize) {
+static void Optimize(llvm::Module& M, const char* Name, const jitialize::Context& C, unsigned OptLevel, unsigned OptSize) {
 
   llvm::Triple Triple{llvm::sys::getProcessTriple()};
 
@@ -54,10 +54,10 @@ static void Optimize(llvm::Module& M, const char* Name, const easy::Context& C, 
 
   llvm::legacy::PassManager MPM;
   MPM.add(llvm::createTargetTransformInfoWrapperPass(TM->getTargetIRAnalysis()));
-  MPM.add(easy::createContextAnalysisPass(C));
-  MPM.add(easy::createInlineParametersPass(Name));
+  MPM.add(jitialize::createContextAnalysisPass(C));
+  MPM.add(jitialize::createInlineParametersPass(Name));
   Builder.populateModulePassManager(MPM);
-  MPM.add(easy::createDevirtualizeConstantPass(Name));
+  MPM.add(jitialize::createDevirtualizeConstantPass(Name));
 
 #ifdef NDEBUG
   MPM.add(llvm::createVerifierPass());
@@ -79,7 +79,7 @@ static std::unique_ptr<llvm::ExecutionEngine> GetEngine(std::unique_ptr<llvm::Mo
           .create());
 
   if(!EE) {
-    throw easy::ExecutionEngineCreateError(Name);
+    throw jitialize::ExecutionEngineCreateError(Name);
   }
 
   return EE;
@@ -117,7 +117,7 @@ CompileAndWrap(const char*Name, GlobalMapping* Globals,
 
   void *Address = (void*)EE->getFunctionAddress(Name);
 
-  std::unique_ptr<LLVMHolder> Holder(new easy::LLVMHolderImpl{std::move(EE), std::move(Ctx), MPtr});
+  std::unique_ptr<LLVMHolder> Holder(new jitialize::LLVMHolderImpl{std::move(EE), std::move(Ctx), MPtr});
   return std::unique_ptr<Function>(new Function(Address, std::move(Holder)));
 }
 
@@ -125,7 +125,7 @@ llvm::Module const& Function::getLLVMModule() const {
   return *static_cast<LLVMHolderImpl const&>(*this->Holder).M_;
 }
 
-std::unique_ptr<Function> Function::Compile(void *Addr, easy::Context const& C) {
+std::unique_ptr<Function> Function::Compile(void *Addr, jitialize::Context const& C) {
 
   auto &BT = BitcodeTracker::GetTracker();
 
@@ -148,7 +148,7 @@ std::unique_ptr<Function> Function::Compile(void *Addr, easy::Context const& C) 
   return CompileAndWrap(Name, Globals, std::move(Ctx), std::move(M));
 }
 
-void easy::Function::serialize(std::ostream& os) const {
+void jitialize::Function::serialize(std::ostream& os) const {
   std::string buf;
   llvm::raw_string_ostream stream(buf);
 
@@ -159,7 +159,7 @@ void easy::Function::serialize(std::ostream& os) const {
   os << buf;
 }
 
-std::unique_ptr<easy::Function> easy::Function::deserialize(std::istream& is) {
+std::unique_ptr<jitialize::Function> jitialize::Function::deserialize(std::istream& is) {
 
   auto &BT = BitcodeTracker::GetTracker();
 
@@ -174,7 +174,7 @@ std::unique_ptr<easy::Function> easy::Function::deserialize(std::istream& is) {
 
   auto M = std::move(ModuleOrError.get());
 
-  std::string FunName = easy::GetEntryFunctionName(*M);
+  std::string FunName = jitialize::GetEntryFunctionName(*M);
 
   GlobalMapping* Globals = nullptr;
   if(void* OrigFunPtr = BT.getAddress(FunName)) {
@@ -184,14 +184,14 @@ std::unique_ptr<easy::Function> easy::Function::deserialize(std::istream& is) {
   return CompileAndWrap(FunName.c_str(), Globals, std::move(Ctx), std::move(M));
 }
 
-bool Function::operator==(easy::Function const& other) const {
+bool Function::operator==(jitialize::Function const& other) const {
   LLVMHolderImpl& This = static_cast<LLVMHolderImpl&>(*this->Holder);
   LLVMHolderImpl& Other = static_cast<LLVMHolderImpl&>(*other.Holder);
   return This.M_ == Other.M_;
 }
 
-std::hash<easy::Function>::result_type
-std::hash<easy::Function>::operator()(argument_type const& F) const noexcept {
+std::hash<jitialize::Function>::result_type
+std::hash<jitialize::Function>::operator()(argument_type const& F) const noexcept {
   LLVMHolderImpl& This = static_cast<LLVMHolderImpl&>(*F.Holder);
   return std::hash<llvm::Module*>{}(This.M_);
 }

@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -23,7 +23,7 @@ Point<T> build (T a, T b) {
 template<class T>
 void test() {
   T val = 1;
-  easy::FunctionWrapper<Point<T>(T)> build_val = easy::jit(build<T>, _1, val);
+  jitialize::FunctionWrapper<Point<T>(T)> build_val = jitialize::jit(build<T>, _1, val);
 
   for(int v = 4; v != 8; ++v) {
     Point<T> xy = build_val((T)v);

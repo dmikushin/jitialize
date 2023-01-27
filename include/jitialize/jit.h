@@ -1,11 +1,11 @@
 #ifndef EASY
 #define EASY
 
-#include <easy/runtime/Context.h>
-#include <easy/attributes.h>
-#include <easy/param.h>
-#include <easy/function_wrapper.h>
-#include <easy/runtime/BitcodeTracker.h>
+#include <jitialize/runtime/Context.h>
+#include <jitialize/attributes.h>
+#include <jitialize/param.h>
+#include <jitialize/function_wrapper.h>
+#include <jitialize/runtime/BitcodeTracker.h>
 
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Bitcode/BitcodeReader.h>
@@ -26,7 +26,7 @@
 #include <tuple>
 #include <cassert>
 
-namespace easy {
+namespace jitialize {
 
 namespace {
 template<class Ret, class ... Params>
@@ -36,7 +36,7 @@ WrapFunction(std::unique_ptr<Function> F, meta::type_list<Ret, Params ...>) {
 }
 
 template<class T, class ... Args>
-auto jit_with_context(easy::Context const &C, T &&Fun) {
+auto jit_with_context(jitialize::Context const &C, T &&Fun) {
 
   auto* FunPtr = meta::get_as_pointer(Fun);
   using FunOriginalTy = std::remove_pointer_t<std::decay_t<T>>;
@@ -56,18 +56,18 @@ auto jit_with_context(easy::Context const &C, T &&Fun) {
 
 
 template<class T, class ... Args>
-easy::Context get_context_for(Args&& ... args) {
+jitialize::Context get_context_for(Args&& ... args) {
   using FunOriginalTy = std::remove_pointer_t<std::decay_t<T>>;
   static_assert(std::is_function<FunOriginalTy>::value,
-                "easy::jit: supports only on functions and function pointers");
+                "jitialize::jit: supports only on functions and function pointers");
 
   using parameter_list = typename meta::function_traits<FunOriginalTy>::parameter_list;
 
   static_assert(parameter_list::size <= sizeof...(Args),
-                "easy::jit: not providing enough argument to actual call");
+                "jitialize::jit: not providing enough argument to actual call");
 
-  easy::Context C;
-  easy::set_parameters<parameter_list, Args&&...>(parameter_list(), C,
+  jitialize::Context C;
+  jitialize::set_parameters<parameter_list, Args&&...>(parameter_list(), C,
                                                   std::forward<Args>(args)...);
   return C;
 }

@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -14,7 +14,7 @@ double add (double a, double b) {
 }
 
 int main() {
-  easy::FunctionWrapper<double(double)> inc = easy::jit(add, _1, 1);
+  jitialize::FunctionWrapper<double(double)> inc = jitialize::jit(add, _1, 1);
 
   // CHECK: inc(4.00) is 5.00
   // CHECK: inc(5.00) is 6.00

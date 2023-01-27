@@ -7,15 +7,15 @@
 
 #include <string>
 
-#include <easy/runtime/Utils.h>
+#include <jitialize/runtime/Utils.h>
 
 using namespace llvm;
 
-static const char EasyJitMD[] = "easy::jit";
+static const char JitializeMD[] = "jitialize::jit";
 static const char EntryTag[] = "entry";
 
-std::string easy::GetEntryFunctionName(Module const &M) {
-  NamedMDNode* MD = M.getNamedMetadata(EasyJitMD);
+std::string jitialize::GetEntryFunctionName(Module const &M) {
+  NamedMDNode* MD = M.getNamedMetadata(JitializeMD);
 
   for(MDNode *Operand : MD->operands()) {
     if(Operand->getNumOperands() != 2)
@@ -29,26 +29,26 @@ std::string easy::GetEntryFunctionName(Module const &M) {
     return Name->getString().str();
   }
 
-  llvm_unreachable("No entry function in easy::jit module!");
+  llvm_unreachable("No entry function in jitialize::jit module!");
   return "";
 }
 
-void easy::MarkAsEntry(llvm::Function &F) {
+void jitialize::MarkAsEntry(llvm::Function &F) {
   Module &M = *F.getParent();
   LLVMContext &Ctx = F.getContext();
-  NamedMDNode* MD = M.getOrInsertNamedMetadata(EasyJitMD);
+  NamedMDNode* MD = M.getOrInsertNamedMetadata(JitializeMD);
   MDNode* Node = MDNode::get(Ctx, { MDString::get(Ctx, EntryTag),
                                     MDString::get(Ctx, F.getName())});
   MD->addOperand(Node);
 }
 
-void easy::UnmarkEntry(llvm::Module &M) {
-  NamedMDNode* MD = M.getOrInsertNamedMetadata(EasyJitMD);
+void jitialize::UnmarkEntry(llvm::Module &M) {
+  NamedMDNode* MD = M.getOrInsertNamedMetadata(JitializeMD);
   M.eraseNamedMetadata(MD);
 }
 
 std::unique_ptr<llvm::Module>
-easy::CloneModuleWithContext(llvm::Module const &LM, llvm::LLVMContext &C) {
+jitialize::CloneModuleWithContext(llvm::Module const &LM, llvm::LLVMContext &C) {
   // I have not found a better way to do this withouth having to fully reimplement
   // CloneModule
 

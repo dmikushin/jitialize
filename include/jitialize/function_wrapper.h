@@ -3,14 +3,14 @@
 
 #include <iostream>
 #include <memory>
-#include <easy/runtime/Function.h>
-#include <easy/meta.h>
+#include <jitialize/runtime/Function.h>
+#include <jitialize/meta.h>
 
 #ifndef _WIN32
 #define __cdecl
 #endif
 
-namespace easy {
+namespace jitialize {
 
 class FunctionWrapperBase {
 

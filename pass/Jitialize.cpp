@@ -1,4 +1,4 @@
-#include <easy/attributes.h>
+#include <jitialize/attributes.h>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
@@ -18,7 +18,7 @@
 #include "llvm/IR/InstrTypes.h"
 #include <llvm/ADT/SetVector.h>
 
-#define DEBUG_TYPE "easy-register-bitcode"
+#define DEBUG_TYPE "jitialize-register-bitcode"
 #include <llvm/Support/Debug.h>
 
 #include <llvm/Support/CommandLine.h>
@@ -35,11 +35,11 @@
 
 using namespace llvm;
 
-static cl::opt<std::string> RegexString("easy-export",
+static cl::opt<std::string> RegexString("jitialize-export",
                                         cl::desc("A regular expression to describe functions to expose at runtime."),
                                         cl::init(""));
 
-namespace easy {
+namespace jitialize {
   struct RegisterBitcode : public ModulePass {
     static char ID;
 
@@ -48,9 +48,9 @@ namespace easy {
 
     bool runOnModule(Module &M) override {
       
-      // execute the rest of the easy::jit passes
+      // execute the rest of the jitialize::jit passes
       legacy::PassManager Passes;
-      Passes.add(easy::createRegisterLayoutPass());
+      Passes.add(jitialize::createRegisterLayoutPass());
       bool Changed = Passes.run(M);
 
       SmallVector<GlobalObject*, 8> ObjectsToJIT;
@@ -131,7 +131,7 @@ namespace easy {
 
     void collectObjectsToJIT(Module &M, SmallVectorImpl<GlobalObject*> &ObjectsToJIT) {
 
-      // get **all** functions passed as parameter to easy jit calls
+      // get **all** functions passed as parameter to jitialize calls
       //   not only the target function, but also its parameters
       deduceObjectsToJIT(M);
       regexFunctionsToJIT(M);
@@ -228,8 +228,8 @@ namespace easy {
     }
 
     void deduceObjectsToJIT(Module &M) {
-      for(Function &EasyJitFun : compilerInterface(M)) {
-        for(User* U : EasyJitFun.users()) {
+      for(Function &JitializeFun : compilerInterface(M)) {
+        for(User* U : JitializeFun.users()) {
           CallBase * CB = dyn_cast<CallBase>(U);
           if(CB) {
             for(Value* O : CB->args()) {
@@ -414,12 +414,12 @@ namespace easy {
             F->setVisibility(GlobalValue::DefaultVisibility);
             F->setLinkage(GlobalValue::PrivateLinkage);
           }
-        } else llvm::report_fatal_error("Easy::Jit [not yet implemented]: handle aliases, ifuncs.");
+        } else llvm::report_fatal_error("Jitialize [not yet implemented]: handle aliases, ifuncs.");
       }
     }
 
     Function* declareRegisterBitcode(Module &M, GlobalVariable *GlobalMapping) {
-      StringRef Name = "easy_register";
+      StringRef Name = "jitialize_register";
       if(Function* F = M.getFunction(Name))
         return F;
 
@@ -477,7 +477,7 @@ namespace easy {
   };
 
   char RegisterBitcode::ID = 0;
-  static RegisterPass<RegisterBitcode> Register("easy-register-bitcode",
+  static RegisterPass<RegisterBitcode> Register("jitialize-register-bitcode",
     "Parse the compilation unit and insert runtime library calls to register "
     "the bitcode associated to functions marked as \"jit\".",
                                                 false, false);

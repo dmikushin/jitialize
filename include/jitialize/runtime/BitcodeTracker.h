@@ -5,12 +5,12 @@
 #include <llvm/IR/Module.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 
-#include <easy/param.h>
+#include <jitialize/param.h>
 
 #include <unordered_map>
 #include <memory>
 
-namespace easy {
+namespace jitialize {
 
 struct GlobalMapping {
   const char* Name;
@@ -55,7 +55,7 @@ class BitcodeTracker {
   void* getAddress(std::string const &Name);
   std::tuple<const char*, GlobalMapping*> getNameAndGlobalMapping(void* FPtr);
   bool hasGlobalMapping(void* FPtr) const;
-  LayoutInfo const & getLayoutInfo(easy::layout_id id) const;
+  LayoutInfo const & getLayoutInfo(jitialize::layout_id id) const;
 
   using ModuleContextPair = std::pair<std::unique_ptr<llvm::Module>, std::unique_ptr<llvm::LLVMContext>>;
   ModuleContextPair getModule(void* FPtr);

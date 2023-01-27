@@ -2,7 +2,7 @@ import lit.formats
 import lit.util
 import os
 
-config.name = 'easy_jit'
+config.name = 'jitialize'
 config.suffixes = ['.c', '.cpp', '.ll', '.test']
 
 config.test_format = lit.formats.ShTest(True)
@@ -12,11 +12,11 @@ config.test_exec_root = "@CMAKE_CURRENT_BINARY_DIR@/tests"
 
 config.environment['PATH'] = os.pathsep.join(["@LLVM_TOOLS_BINARY_DIR@"] + [ config.environment['PATH'] ])
 
-runtime_lib = os.path.basename("@EASY_JIT_RUNTIME@").split('.')[0].replace("lib", "", 1)
-runtime_lib_dir = os.path.dirname("@EASY_JIT_RUNTIME@")
+runtime_lib = os.path.basename("@JITIALIZE_RUNTIME@").split('.')[0].replace("lib", "", 1)
+runtime_lib_dir = os.path.dirname("@JITIALIZE_RUNTIME@")
 llvm_lib_dir = os.path.join(os.path.dirname("@LLVM_TOOLS_BINARY_DIR@"), "lib")
 
-includes = ["@EASY_JIT_ROOT@"]
+includes = ["@JITIALIZE_ROOT@"]
 include_flags = " ".join(["-I'" + os.path.abspath(dir) + "'" for dir in "@LLVM_INCLUDE_DIRS@".split()] + ["-I'" + os.path.join(dir, "include") + "'" for dir in includes] )
 
 ld_paths = [runtime_lib_dir, llvm_lib_dir]
@@ -39,16 +39,16 @@ config.substitutions.append(('%opt', os.path.join("@LLVM_TOOLS_BINARY_DIR@", "op
 config.substitutions.append(('%cxxflags', common_flags + "--std=c++14"))
 config.substitutions.append(('%cflags', common_flags))
 config.substitutions.append(('%include_flags', include_flags))
-config.substitutions.append(('%lib_pass', "@EASY_JIT_PASS@"))
-config.substitutions.append(('%lib_runtime', "@EASY_JIT_RUNTIME@"))
+config.substitutions.append(('%lib_pass', "@JITIALIZE_PASS@"))
+config.substitutions.append(('%lib_runtime', "@JITIALIZE_RUNTIME@"))
 config.substitutions.append(('%ld_flags', ld_flags))
 
 config.substitutions.append(('%not', "!"))
 
 config.substitutions.append(('%FileCheck', os.path.join("@LLVM_TOOLS_BINARY_DIR@", "FileCheck")))
 
-if "@EASY_JIT_BENCHMARK@" in ["1", "ON"] :
+if "@JITIALIZE_BENCHMARK@" in ["1", "ON"] :
   config.available_features.add('benchmark')
 
-if "@CMAKE_INSTALL_PREFIX@" and os.path.exists(os.path.join("@CMAKE_INSTALL_PREFIX@", "include", "easy")):
+if "@CMAKE_INSTALL_PREFIX@" and os.path.exists(os.path.join("@CMAKE_INSTALL_PREFIX@", "include", "jitialize")):
   config.available_features.add('install')

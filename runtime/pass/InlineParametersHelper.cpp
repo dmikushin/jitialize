@@ -1,14 +1,14 @@
 #include "InlineParametersHelper.h"
-#include <easy/runtime/BitcodeTracker.h>
+#include <jitialize/runtime/BitcodeTracker.h>
 
 #include <llvm/Linker/Linker.h>
 
 #include <llvm/Support/raw_ostream.h>
 
 using namespace llvm;
-using namespace easy;
+using namespace jitialize;
 
-HighLevelLayout::HighLevelLayout(easy::Context const& C, llvm::Function &F) {
+HighLevelLayout::HighLevelLayout(jitialize::Context const& C, llvm::Function &F) {
   StructReturn_ = nullptr;
 
   FunctionType* FTy = F.getFunctionType();
@@ -17,14 +17,14 @@ HighLevelLayout::HighLevelLayout(easy::Context const& C, llvm::Function &F) {
 
   Return_ = FTy->getReturnType();
 
-  auto &BT = easy::BitcodeTracker::GetTracker();
+  auto &BT = jitialize::BitcodeTracker::GetTracker();
 
   size_t ParamIdx = 0;
   size_t ArgIdx = 0;
   if(StructReturn_)
     ParamIdx++;
 
-  for(easy::layout_id lid : C.getLayout()) {
+  for(jitialize::layout_id lid : C.getLayout()) {
     size_t N = BT.getLayoutInfo(lid).NumFields;
 
     Args_.emplace_back(ArgIdx, ParamIdx);
@@ -48,8 +48,8 @@ HighLevelLayout::HighLevelLayout(easy::Context const& C, llvm::Function &F) {
 }
 
 llvm::SmallVector<llvm::Value*, 4>
-easy::GetForwardArgs(easy::HighLevelLayout::HighLevelArg &ArgInF, easy::HighLevelLayout &FHLL,
-               llvm::Function &Wrapper, easy::HighLevelLayout &WrapperHLL) {
+jitialize::GetForwardArgs(jitialize::HighLevelLayout::HighLevelArg &ArgInF, jitialize::HighLevelLayout &FHLL,
+               llvm::Function &Wrapper, jitialize::HighLevelLayout &WrapperHLL) {
 
   llvm::SmallVector<llvm::Value*, 4> Args;
 
@@ -68,18 +68,18 @@ easy::GetForwardArgs(easy::HighLevelLayout::HighLevelArg &ArgInF, easy::HighLeve
   return Args;
 }
 
-Constant* easy::GetScalarArgument(ArgumentBase const& Arg, Type* T) {
+Constant* jitialize::GetScalarArgument(ArgumentBase const& Arg, Type* T) {
   switch(Arg.kind()) {
-    case easy::ArgumentBase::AK_Int: {
-      auto const *Int = Arg.as<easy::IntArgument>();
+    case jitialize::ArgumentBase::AK_Int: {
+      auto const *Int = Arg.as<jitialize::IntArgument>();
       return ConstantInt::get(T, Int->get(), true);
     }
-    case easy::ArgumentBase::AK_Float: {
-      auto const *Float = Arg.as<easy::FloatArgument>();
+    case jitialize::ArgumentBase::AK_Float: {
+      auto const *Float = Arg.as<jitialize::FloatArgument>();
       return ConstantFP::get(T, Float->get());
     }
-    case easy::ArgumentBase::AK_Ptr: {
-      auto const *Ptr = Arg.as<easy::PtrArgument>();
+    case jitialize::ArgumentBase::AK_Ptr: {
+      auto const *Ptr = Arg.as<jitialize::PtrArgument>();
       uintptr_t Addr = (uintptr_t)Ptr->get();
       return ConstantExpr::getIntToPtr(
                 ConstantInt::get(Type::getInt64Ty(T->getContext()), Addr, false),
@@ -90,8 +90,8 @@ Constant* easy::GetScalarArgument(ArgumentBase const& Arg, Type* T) {
   }
 }
 
-llvm::Constant* easy::LinkPointerIfPossible(llvm::Module &M, easy::PtrArgument const &Ptr, Type* PtrTy) {
-  auto &BT = easy::BitcodeTracker::GetTracker();
+llvm::Constant* jitialize::LinkPointerIfPossible(llvm::Module &M, jitialize::PtrArgument const &Ptr, Type* PtrTy) {
+  auto &BT = jitialize::BitcodeTracker::GetTracker();
   void* PtrValue = const_cast<void*>(Ptr.get());
   if(BT.hasGlobalMapping(PtrValue)) {
     const char* LName = std::get<0>(BT.getNameAndGlobalMapping(PtrValue));
@@ -118,7 +118,7 @@ llvm::Constant* easy::LinkPointerIfPossible(llvm::Module &M, easy::PtrArgument c
   return nullptr;
 }
 
-std::pair<llvm::Constant*, size_t> easy::GetConstantFromRaw(llvm::DataLayout const& DL,
+std::pair<llvm::Constant*, size_t> jitialize::GetConstantFromRaw(llvm::DataLayout const& DL,
                                                             llvm::Type* T, const uint8_t* Raw) {
   // pack in a I8 constant vector and cast
   Type* I8 = Type::getInt8Ty(T->getContext());
@@ -161,7 +161,7 @@ size_t StoreStructField(llvm::IRBuilder<> &B,
     }
   } else {
     Constant* FieldValue;
-    std::tie(FieldValue, RawOffset) = easy::GetConstantFromRaw(DL, Ty, (uint8_t const*)Raw);
+    std::tie(FieldValue, RawOffset) = jitialize::GetConstantFromRaw(DL, Ty, (uint8_t const*)Raw);
 
     Value* FieldPtr = B.CreateGEP(nullptr, Alloc, GEP, "field.gep");
     B.CreateStore(FieldValue, FieldPtr);
@@ -169,9 +169,9 @@ size_t StoreStructField(llvm::IRBuilder<> &B,
   return RawOffset;
 }
 
-llvm::AllocaInst* easy::GetStructAlloc(llvm::IRBuilder<> &B,
+llvm::AllocaInst* jitialize::GetStructAlloc(llvm::IRBuilder<> &B,
                                        llvm::DataLayout const &DL,
-                                       easy::StructArgument const &Struct,
+                                       jitialize::StructArgument const &Struct,
                                        llvm::Type* StructPtrTy) {
   Type* StructTy = StructPtrTy->getContainedType(0);
   AllocaInst* Alloc = B.CreateAlloca(StructTy);

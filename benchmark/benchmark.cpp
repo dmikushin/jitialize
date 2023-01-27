@@ -1,6 +1,5 @@
-
 #include <benchmark/benchmark.h>
-#include <easy/code_cache.h>
+#include <jitialize/code_cache.h>
 #include <numeric>
 #include <algorithm>
 
@@ -68,7 +67,7 @@ static void BM_convolve(benchmark::State& state) {
   std::vector<int> image(n*n,0);
   std::vector<int> out((n-3)*(n-3),0);
 
-  auto my_kernel = easy::jit(kernel, n, 3, _1, &mask[0][0], _2);
+  auto my_kernel = jitialize::jit(kernel, n, 3, _1, &mask[0][0], _2);
 
   benchmark::ClobberMemory();
 
@@ -86,7 +85,7 @@ BENCHMARK(BM_convolve)->Ranges({{16,1024}, {0,1}});
 static void BM_convolve_compile_jit(benchmark::State& state) {
   using namespace std::placeholders;
   for (auto _ : state) {
-    auto my_kernel = easy::jit(kernel, 11, 3, _1, &mask[0][0], _2);
+    auto my_kernel = jitialize::jit(kernel, 11, 3, _1, &mask[0][0], _2);
     benchmark::ClobberMemory();
   }
 }
@@ -94,7 +93,7 @@ BENCHMARK(BM_convolve_compile_jit);
 
 static void BM_convolve_cache_hit_jit(benchmark::State& state) {
   using namespace std::placeholders;
-  static easy::Cache<> cache;
+  static jitialize::Cache<> cache;
   cache.jit(kernel, 11, 3, _1, &mask[0][0], _2);
   benchmark::ClobberMemory();
 
@@ -115,7 +114,7 @@ static void BM_qsort(benchmark::State& state) {
   std::iota(vec.begin(), vec.end(), 0);
   std::random_shuffle(vec.begin(), vec.end());
 
-  auto my_qsort = easy::jit(Qsort, _1, _2, _3, int_cmp);
+  auto my_qsort = jitialize::jit(Qsort, _1, _2, _3, int_cmp);
   benchmark::ClobberMemory();
 
   for (auto _ : state) {
@@ -132,7 +131,7 @@ BENCHMARK(BM_qsort)->Ranges({{16,1024}, {0,1}});
 static void BM_qsort_compile_jit(benchmark::State& state) {
   using namespace std::placeholders;
   for (auto _ : state) {
-    auto my_qsort = easy::jit(Qsort, _1, _2, _3, int_cmp);
+    auto my_qsort = jitialize::jit(Qsort, _1, _2, _3, int_cmp);
     benchmark::ClobberMemory();
   }
 }
@@ -140,7 +139,7 @@ BENCHMARK(BM_qsort_compile_jit);
 
 static void BM_qsort_cache_hit_jit(benchmark::State& state) {
   using namespace std::placeholders;
-  static easy::Cache<> cache;
+  static jitialize::Cache<> cache;
   cache.jit(Qsort, _1, _2, _3, int_cmp);
   benchmark::ClobberMemory();
   for (auto _ : state) {

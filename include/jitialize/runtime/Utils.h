@@ -10,7 +10,7 @@ namespace llvm {
   class Function;
 }
 
-namespace easy {
+namespace jitialize {
 
 std::string GetEntryFunctionName(llvm::Module const &M);
 void MarkAsEntry(llvm::Function &F);

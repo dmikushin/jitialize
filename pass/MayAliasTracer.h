@@ -8,7 +8,7 @@ namespace llvm {
   class GlobalObject;
 }
 
-namespace easy {
+namespace jitialize {
   class MayAliasTracer {
     llvm::SmallPtrSet<llvm::GlobalObject*, 32> GOs_;
 

@@ -1,7 +1,7 @@
 // RUN: %clangxx %cxxflags %include_flags %ld_flags %s -Xclang -load -Xclang %lib_pass -o %t
 // RUN: %t > %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -27,7 +27,7 @@ long whopie (Point<T> a, T b) {
 template<class T>
 void test_swap() {
   T val = 1;
-  auto whop = easy::jit(whopie<T>, _2, _1);
+  auto whop = jitialize::jit(whopie<T>, _2, _1);
 
   for(int v = 4; v != 8; ++v) {
     long z = whop(val, Point<T>(v*2, v*3));
@@ -41,7 +41,7 @@ void test_swap() {
 template<class T>
 void test_specialzie_a() {
   T val = 1;
-  auto whop = easy::jit(whopie<T>, _1, val);
+  auto whop = jitialize::jit(whopie<T>, _1, val);
 
   for(int v = 4; v != 8; ++v) {
     long z = whop(Point<T>(v*2, v*3));
@@ -55,7 +55,7 @@ void test_specialzie_a() {
 template<class T>
 void test_specialzie_b() {
   T val = 1;
-  auto whop = easy::jit(whopie<T>, Point<T>(val*2, val*3), _1);
+  auto whop = jitialize::jit(whopie<T>, Point<T>(val*2, val*3), _1);
 
   for(int v = 4; v != 8; ++v) {
     long z = whop(v);
@@ -69,7 +69,7 @@ void test_specialzie_b() {
 template<class T>
 void test_specialzie_ab() {
   T val = 1;
-  auto whop = easy::jit(whopie<T>, Point<T>(val*2, val*3), val);
+  auto whop = jitialize::jit(whopie<T>, Point<T>(val*2, val*3), val);
 
   for(int v = 4; v != 8; ++v) {
     long z = whop();

@@ -4,7 +4,7 @@
 #include "LLVMHolder.h"
 #include <memory>
 
-namespace easy {
+namespace jitialize {
   class Function;
 }
 
@@ -13,15 +13,15 @@ namespace llvm {
 }
 
 namespace std {
-  template<> struct hash<easy::Function>
+  template<> struct hash<jitialize::Function>
   {
-    typedef easy::Function argument_type;
+    typedef jitialize::Function argument_type;
     typedef std::size_t result_type;
     result_type operator()(argument_type const& F) const noexcept;
   };
 }
 
-namespace easy {
+namespace jitialize {
 
 class Context;
 struct GlobalMapping;
@@ -30,11 +30,11 @@ class Function {
 
   // do not reorder the fields and do not add virtual methods!
   void* Address; 
-  std::unique_ptr<easy::LLVMHolder> Holder;
+  std::unique_ptr<jitialize::LLVMHolder> Holder;
 
   public:
 
-  Function(void* Addr, std::unique_ptr<easy::LLVMHolder> H);
+  Function(void* Addr, std::unique_ptr<jitialize::LLVMHolder> H);
 
   void* getRawPointer() const {
     return Address;
@@ -43,14 +43,14 @@ class Function {
   void serialize(std::ostream&) const;
   static std::unique_ptr<Function> deserialize(std::istream&);
 
-  bool operator==(easy::Function const&) const;
+  bool operator==(jitialize::Function const&) const;
 
   llvm::Module const& getLLVMModule() const;
 
-  static std::unique_ptr<Function> Compile(void *Addr, easy::Context const &C);
+  static std::unique_ptr<Function> Compile(void *Addr, jitialize::Context const &C);
 
   friend
-  std::hash<easy::Function>::result_type std::hash<easy::Function>::operator()(argument_type const& F) const noexcept;
+  std::hash<jitialize::Function>::result_type std::hash<jitialize::Function>::operator()(argument_type const& F) const noexcept;
 };
 
 }

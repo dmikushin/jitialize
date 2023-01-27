@@ -3,9 +3,9 @@
 
 #include<llvm/Pass.h>
 #include<llvm/ADT/StringRef.h>
-#include<easy/runtime/Context.h>
+#include<jitialize/runtime/Context.h>
 
-namespace easy {
+namespace jitialize {
   struct ContextAnalysis :
       public llvm::ImmutablePass {
 
@@ -16,13 +16,13 @@ namespace easy {
     ContextAnalysis(Context const &C)
       : llvm::ImmutablePass(ID), C_(&C) {}
 
-    easy::Context const& getContext() const {
+    jitialize::Context const& getContext() const {
       return *C_;
     }
 
     private:
 
-    easy::Context const *C_;
+    jitialize::Context const *C_;
   };
 
   struct InlineParameters:
@@ -65,7 +65,7 @@ namespace easy {
     llvm::StringRef TargetName_;
   };
 
-  llvm::Pass* createContextAnalysisPass(easy::Context const &C);
+  llvm::Pass* createContextAnalysisPass(jitialize::Context const &C);
   llvm::Pass* createInlineParametersPass(llvm::StringRef Name);
   llvm::Pass* createDevirtualizeConstantPass(llvm::StringRef Name);
 }

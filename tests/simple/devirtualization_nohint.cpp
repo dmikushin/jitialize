@@ -3,8 +3,8 @@
 // RUN: %FileCheck %s < %t.out
 // RUN: %FileCheck --check-prefix=CHECK-IR %s < %t.ll
 
-#include <easy/jit.h>
-#include <easy/options.h>
+#include <jitialize/jit.h>
+#include <jitialize/options.h>
 
 #include <functional>
 #include <cstdio>
@@ -36,10 +36,10 @@ int main(int argc, char** argv) {
   else
     f = new Bar();
 
-  easy::FunctionWrapper<int(void)> easy_doit = easy::jit(doit, f, easy::options::dump_ir(argv[1]));
+  jitialize::FunctionWrapper<int(void)> jitialize_doit = jitialize::jit(doit, f, jitialize::options::dump_ir(argv[1]));
 
   // CHECK: doit() is 2
-  printf("doit() is %d\n", easy_doit());
+  printf("doit() is %d\n", jitialize_doit());
 
   delete f;
 

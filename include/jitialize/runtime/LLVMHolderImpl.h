@@ -1,13 +1,13 @@
 #ifndef LLVMHOLDER_IMPL
 #define LLVMHOLDER_IMPL
 
-#include <easy/runtime/LLVMHolder.h>
+#include <jitialize/runtime/LLVMHolder.h>
 
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 
-namespace easy {
-class LLVMHolderImpl : public easy::LLVMHolder {
+namespace jitialize {
+class LLVMHolderImpl : public jitialize::LLVMHolder {
   public:
 
   std::unique_ptr<llvm::LLVMContext> Context_;

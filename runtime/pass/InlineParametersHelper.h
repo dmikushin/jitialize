@@ -7,9 +7,9 @@
 #include <llvm/IR/Constants.h>
 #include <llvm/ADT/SmallVector.h>
 
-#include <easy/runtime/Context.h>
+#include <jitialize/runtime/Context.h>
 
-namespace easy {
+namespace jitialize {
 
 struct HighLevelLayout {
   struct HighLevelArg {
@@ -27,16 +27,16 @@ struct HighLevelLayout {
   llvm::SmallVector<HighLevelArg, 4> Args_;
   llvm::Type* Return_;
 
-  HighLevelLayout(easy::Context const& C, llvm::Function &F);
+  HighLevelLayout(jitialize::Context const& C, llvm::Function &F);
 };
 
-llvm::SmallVector<llvm::Value*, 4> GetForwardArgs(easy::HighLevelLayout::HighLevelArg &ArgInF, easy::HighLevelLayout &FHLL,
-                                                  llvm::Function &Wrapper, easy::HighLevelLayout &WrapperHLL);
-llvm::Constant* GetScalarArgument(easy::ArgumentBase const& Arg, llvm::Type* T);
+llvm::SmallVector<llvm::Value*, 4> GetForwardArgs(jitialize::HighLevelLayout::HighLevelArg &ArgInF, jitialize::HighLevelLayout &FHLL,
+                                                  llvm::Function &Wrapper, jitialize::HighLevelLayout &WrapperHLL);
+llvm::Constant* GetScalarArgument(jitialize::ArgumentBase const& Arg, llvm::Type* T);
 
-llvm::Constant* LinkPointerIfPossible(llvm::Module &M, easy::PtrArgument const &Ptr, llvm::Type* PtrTy);
+llvm::Constant* LinkPointerIfPossible(llvm::Module &M, jitialize::PtrArgument const &Ptr, llvm::Type* PtrTy);
 
-llvm::AllocaInst* GetStructAlloc(llvm::IRBuilder<> &B, llvm::DataLayout const &DL, easy::StructArgument const &Struct, llvm::Type* StructPtrTy);
+llvm::AllocaInst* GetStructAlloc(llvm::IRBuilder<> &B, llvm::DataLayout const &DL, jitialize::StructArgument const &Struct, llvm::Type* StructPtrTy);
 
 std::pair<llvm::Constant*, size_t> GetConstantFromRaw(llvm::DataLayout const& DL, llvm::Type* T, const uint8_t* Raw);
 

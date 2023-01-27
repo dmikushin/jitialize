@@ -4,9 +4,9 @@
 #include <functional>
 #include <type_traits>
 #include <cstddef>
-#include <easy/options.h>
+#include <jitialize/options.h>
 
-namespace easy {
+namespace jitialize {
 namespace meta {
 
 template<class ... Empty>
@@ -157,8 +157,8 @@ struct map_placeholder_to_type {
     // [int,bool,float] [] [float,bool] [_2,_1] 2
     // yields new foo'(float _1, bool _2) = foo(int(4), _2, _1);
 
-    static_assert(PL::size >= AL::size, "easy::jit: More parameters than arguments specified");
-    static_assert(result_idx < Result::size, "easy::jit: Cannot have a placeholder outside the maximum");
+    static_assert(PL::size >= AL::size, "jitialize::jit: More parameters than arguments specified");
+    static_assert(result_idx < Result::size, "jitialize::jit: Cannot have a placeholder outside the maximum");
     using new_result = std::conditional_t<parse_placeholder, typename Result::template set<result_idx, pl_at_idx>, Result>;
     using new_seen = std::conditional_t<parse_placeholder, typename Seen::template push_back<al_head>, Seen>;
 
@@ -166,7 +166,7 @@ struct map_placeholder_to_type {
   };
   template<class PL, class Result, class Seen, size_t N>
   struct helper<PL, type_list<>, Result, Seen, N, false>{
-    static_assert(N==-1 /*just to make this context dependent*/, "easy::jit: Invalid bind, placeholder cannot be bound to a formal argument");
+    static_assert(N==-1 /*just to make this context dependent*/, "jitialize::jit: Invalid bind, placeholder cannot be bound to a formal argument");
   };
 
   using default_param = void;

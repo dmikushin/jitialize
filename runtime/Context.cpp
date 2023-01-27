@@ -1,6 +1,6 @@
-#include "easy/runtime/Context.h"
+#include "jitialize/runtime/Context.h"
 
-using namespace easy;
+using namespace jitialize;
 
 Context& Context::setParameterIndex(unsigned param_idx) {
   return setArg<ForwardArgument>(param_idx);
@@ -22,7 +22,7 @@ Context& Context::setParameterStruct(serialized_arg arg) {
   return setArg<StructArgument>(std::move(arg));
 }
 
-Context& Context::setParameterModule(easy::Function const &F) {
+Context& Context::setParameterModule(jitialize::Function const &F) {
   return setArg<ModuleArgument>(F);
 }
 

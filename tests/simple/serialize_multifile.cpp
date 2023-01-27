@@ -1,10 +1,10 @@
 // RUN: %clangxx %cxxflags %include_flags %s -DMAIN -c -o %t.main.o
-// RUN: %clangxx %cxxflags %include_flags %s -Xclang -load -Xclang %lib_pass -DLIB -c -o %t.lib.o -mllvm -easy-export="add"
+// RUN: %clangxx %cxxflags %include_flags %s -Xclang -load -Xclang %lib_pass -DLIB -c -o %t.lib.o -mllvm -jitialize-export="add"
 // RUN: %clangxx %ld_flags %t.main.o %t.lib.o -o %t 
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -22,7 +22,7 @@ static int add (int a, int b) {
 }
 
 std::string get_add(int b) {
-  auto inc_store = easy::jit(add, _1, 1);
+  auto inc_store = jitialize::jit(add, _1, 1);
 
   std::ostringstream out;
   inc_store.serialize(out);
@@ -41,7 +41,7 @@ int main() {
 
   std::string bitcode = get_add(1);
   std::istringstream in(bitcode);
-  auto inc_load = easy::FunctionWrapper<int(int)>::deserialize(in);
+  auto inc_load = jitialize::FunctionWrapper<int(int)>::deserialize(in);
 
   // CHECK: inc(4) is 5
   // CHECK: inc(5) is 7

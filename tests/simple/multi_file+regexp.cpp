@@ -1,5 +1,5 @@
 // RUN: %clangxx %cxxflags %include_flags %s -Xclang -load -Xclang %lib_pass -DMAIN -c -o %t.main.o
-// RUN: %clangxx %cxxflags %include_flags %s -Xclang -load -Xclang %lib_pass -DLIB -c -o %t.lib.o -mllvm -easy-export="add"
+// RUN: %clangxx %cxxflags %include_flags %s -Xclang -load -Xclang %lib_pass -DLIB -c -o %t.lib.o -mllvm -jitialize-export="add"
 // RUN: %clangxx %ld_flags %t.main.o %t.lib.o -o %t 
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
@@ -14,7 +14,7 @@ extern "C" int add (int a, int b) {
 
 #ifdef MAIN
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -24,7 +24,7 @@ using namespace std::placeholders;
 extern "C" int add (int a, int b);
 
 int main() {
-  easy::FunctionWrapper<int(int)> inc = easy::jit(add, _1, 1);
+  jitialize::FunctionWrapper<int(int)> inc = jitialize::jit(add, _1, 1);
 
   // CHECK: inc(4) is 5
   // CHECK: inc(5) is 6

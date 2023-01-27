@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -18,7 +18,7 @@ int add (int a, int b) {
 }
 
 int main() {
-  auto inc_store = easy::jit(add, _1, 1);
+  auto inc_store = jitialize::jit(add, _1, 1);
 
   std::stringstream out;
   inc_store.serialize(out);
@@ -30,7 +30,7 @@ int main() {
   printf("buffer.size() = %lu\n", buffer.size());
 
   std::stringstream in(buffer);
-  auto inc_load = easy::FunctionWrapper<int(int)>::deserialize(in);
+  auto inc_load = jitialize::FunctionWrapper<int(int)>::deserialize(in);
 
   // CHECK: inc(4) is 6
   // CHECK: inc(5) is 8

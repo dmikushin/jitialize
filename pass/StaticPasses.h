@@ -3,7 +3,7 @@
 
 #include <llvm/Pass.h>
 
-namespace easy {
+namespace jitialize {
   llvm::Pass* createRegisterBitcodePass();
   llvm::Pass* createRegisterLayoutPass();
 }

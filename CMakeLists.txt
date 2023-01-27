@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13.4)
 
-project(easy-jist-in-time)
+project(jitialize)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -38,7 +38,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-set(EASY_JIT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(JITIALIZE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Suppress superfluous randlib warnings about "*.a" having no symbols on MacOSX.
 if (APPLE)
@@ -55,6 +55,7 @@ add_subdirectory(runtime)
 add_subdirectory(doc)
 add_subdirectory(benchmark)
 
-add_custom_target(easy-jit-core DEPENDS EasyJitPass EasyJitRuntime)
+add_custom_target(jitialize-core DEPENDS JitializePass JitializeRuntime)
 
 include(CMakeTests.txt)
+

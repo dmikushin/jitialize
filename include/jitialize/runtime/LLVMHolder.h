@@ -1,6 +1,6 @@
 #ifndef LLVMHOLDER
 #define LLVMHOLDER
-namespace easy {
+namespace jitialize {
 class LLVMHolder {
   public:
   virtual ~LLVMHolder() = default;

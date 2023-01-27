@@ -1,7 +1,7 @@
 #ifndef OPTIONS
 #define OPTIONS
 
-#include <easy/runtime/Context.h>
+#include <jitialize/runtime/Context.h>
 
 #define EASY_NEW_OPTION_STRUCT(Name) \
   struct Name; \
@@ -10,10 +10,10 @@
   struct Name
 
 #define EASY_HANDLE_OPTION_STRUCT(Name, Ctx) \
-  void handle(easy::Context &Ctx) const
+  void handle(jitialize::Context &Ctx) const
 
 
-namespace easy {
+namespace jitialize {
 namespace options{
 
   template<class T>

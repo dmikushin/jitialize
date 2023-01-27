@@ -1,6 +1,6 @@
 // RUN: %not %clangxx %cxxflags %include_flags %ld_flags %s -Xclang -load -Xclang %lib_pass -o %t
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -21,8 +21,8 @@ int accumulate(std::vector<int> const &vec, int acum, int(*fun)(int)) {
 
 int main(int argc, char** argv) {
 
-  easy::FunctionWrapper<float(float)> mul_by_two = easy::jit(mul, _1, 2.0);
-  easy::FunctionWrapper<int(std::vector<int> const&)> mul_vector_by_two = easy::jit(accumulate, _1, 0, mul_by_two);
+  jitialize::FunctionWrapper<float(float)> mul_by_two = jitialize::jit(mul, _1, 2.0);
+  jitialize::FunctionWrapper<int(std::vector<int> const&)> mul_vector_by_two = jitialize::jit(accumulate, _1, 0, mul_by_two);
 
   return 0;
 }

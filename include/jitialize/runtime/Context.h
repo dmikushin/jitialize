@@ -8,9 +8,9 @@
 #include <cstdlib>
 #include <string>
 
-#include <easy/runtime/Function.h>
+#include <jitialize/runtime/Function.h>
 
-namespace easy {
+namespace jitialize {
 
 struct serialized_arg {
   std::vector<char> buf;
@@ -52,7 +52,7 @@ struct ArgumentBase {
     else return nullptr;
   }
 
-  friend std::hash<easy::ArgumentBase>;
+  friend std::hash<jitialize::ArgumentBase>;
 
   virtual ArgumentKind kind() const noexcept = 0;
 
@@ -88,7 +88,7 @@ DeclareArgument(Forward, unsigned);
 DeclareArgument(Int, int64_t);
 DeclareArgument(Float, double);
 DeclareArgument(Ptr, void const*);
-DeclareArgument(Module, easy::Function const&);
+DeclareArgument(Module, jitialize::Function const&);
 
 class StructArgument
     : public ArgumentBase {
@@ -147,7 +147,7 @@ class Context {
   Context& setParameterFloat(double);
   Context& setParameterPointer(void const*);
   Context& setParameterStruct(serialized_arg);
-  Context& setParameterModule(easy::Function const&);
+  Context& setParameterModule(jitialize::Function const&);
 
   Context& setArgumentLayout(layout_id id) {
     ArgumentLayout_.push_back(id); // each layout id is associated with a number of fields in the bitcode tracker
@@ -190,7 +190,7 @@ class Context {
     return *ArgumentMapping_[i];
   }
 
-  friend bool operator<(easy::Context const &C1, easy::Context const &C2);
+  friend bool operator<(jitialize::Context const &C1, jitialize::Context const &C2);
 }; 
 
 }
@@ -206,22 +206,22 @@ namespace std
     }
   };
 
-  template<> struct hash<easy::ArgumentBase>
+  template<> struct hash<jitialize::ArgumentBase>
   {
-    typedef easy::ArgumentBase argument_type;
+    typedef jitialize::ArgumentBase argument_type;
     typedef std::size_t result_type;
     result_type operator()(argument_type const& s) const noexcept {
       return s.hash();
     }
   };
 
-  template<> struct hash<easy::Context>
+  template<> struct hash<jitialize::Context>
   {
-    typedef easy::Context argument_type;
+    typedef jitialize::Context argument_type;
     typedef std::size_t result_type;
     result_type operator()(argument_type const& C) const noexcept {
       size_t H = 0;
-      std::hash<easy::ArgumentBase> ArgHash;
+      std::hash<jitialize::ArgumentBase> ArgHash;
       std::hash<std::pair<unsigned, unsigned>> OptHash;
       for(auto const &Arg : C)
         H ^= ArgHash(*Arg);

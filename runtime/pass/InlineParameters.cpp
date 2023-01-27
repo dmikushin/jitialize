@@ -1,5 +1,5 @@
-#include <easy/runtime/RuntimePasses.h>
-#include <easy/runtime/Utils.h>
+#include <jitialize/runtime/RuntimePasses.h>
+#include <jitialize/runtime/Utils.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Constant.h>
@@ -16,21 +16,21 @@
 #include "InlineParametersHelper.h"
 
 using namespace llvm;
-using easy::HighLevelLayout;
+using jitialize::HighLevelLayout;
 
-char easy::InlineParameters::ID = 0;
+char jitialize::InlineParameters::ID = 0;
 
-llvm::Pass* easy::createInlineParametersPass(llvm::StringRef Name) {
+llvm::Pass* jitialize::createInlineParametersPass(llvm::StringRef Name) {
   return new InlineParameters(Name);
 }
 
-HighLevelLayout GetNewLayout(easy::Context const &C, HighLevelLayout &HLL) {
+HighLevelLayout GetNewLayout(jitialize::Context const &C, HighLevelLayout &HLL) {
 
   assert(C.size() == HLL.Args_.size());
 
   size_t NNewArgs = 0;
   for(auto const &Arg : C)
-    if(auto const *Map = Arg->as<easy::ForwardArgument>())
+    if(auto const *Map = Arg->as<jitialize::ForwardArgument>())
       NNewArgs = std::max<size_t>(NNewArgs, Map->get()+1);
 
   HighLevelLayout NewHLL(HLL);
@@ -41,7 +41,7 @@ HighLevelLayout GetNewLayout(easy::Context const &C, HighLevelLayout &HLL) {
 
   // only forwarded params are kept
   for(size_t arg = 0; arg != HLL.Args_.size(); ++arg) {
-    if(auto const *Map = C.getArgumentMapping(arg).as<easy::ForwardArgument>()) {
+    if(auto const *Map = C.getArgumentMapping(arg).as<jitialize::ForwardArgument>()) {
       if(!VisitedArgs.insert(Map->get()).second)
         continue;
       NewHLL.Args_[Map->get()] = HLL.Args_[arg];
@@ -65,7 +65,7 @@ FunctionType* GetWrapperTy(HighLevelLayout &HLL) {
   return FunctionType::get(HLL.Return_, Args, false);
 }
 
-void GetInlineArgs(easy::Context const &C,
+void GetInlineArgs(jitialize::Context const &C,
                    Function& F, HighLevelLayout &FHLL,
                    Function &Wrapper, HighLevelLayout &WrapperHLL,
                    SmallVectorImpl<Value*> &Args, IRBuilder<> &B) {
@@ -82,33 +82,33 @@ void GetInlineArgs(easy::Context const &C,
 
     switch(Arg.kind()) {
 
-      case easy::ArgumentBase::AK_Forward: {
+      case jitialize::ArgumentBase::AK_Forward: {
         auto Forward = GetForwardArgs(ArgInF, FHLL, Wrapper, WrapperHLL);
         Args.insert(Args.end(), Forward.begin(), Forward.end());
       } break;
-      case easy::ArgumentBase::AK_Int:
-      case easy::ArgumentBase::AK_Float: {
-        Args.push_back(easy::GetScalarArgument(Arg, ArgInF.Types_[0]));
+      case jitialize::ArgumentBase::AK_Int:
+      case jitialize::ArgumentBase::AK_Float: {
+        Args.push_back(jitialize::GetScalarArgument(Arg, ArgInF.Types_[0]));
       } break;
 
-      case easy::ArgumentBase::AK_Ptr: {
-        auto const *Ptr = Arg.as<easy::PtrArgument>();
+      case jitialize::ArgumentBase::AK_Ptr: {
+        auto const *Ptr = Arg.as<jitialize::PtrArgument>();
         Type* PtrTy = FHLL.Args_[i].Types_[0];
 
-        Constant* PtrVal = easy::GetScalarArgument(Arg, PtrTy);
-        if(Constant* LinkedPtr = easy::LinkPointerIfPossible(*Wrapper.getParent(), *Ptr, PtrTy))
+        Constant* PtrVal = jitialize::GetScalarArgument(Arg, PtrTy);
+        if(Constant* LinkedPtr = jitialize::LinkPointerIfPossible(*Wrapper.getParent(), *Ptr, PtrTy))
           PtrVal = LinkedPtr;
 
         Args.push_back(PtrVal);
       } break;
 
-      case easy::ArgumentBase::AK_Struct: {
-        auto const *Struct = Arg.as<easy::StructArgument>();
+      case jitialize::ArgumentBase::AK_Struct: {
+        auto const *Struct = Arg.as<jitialize::StructArgument>();
         auto &ArgInF = FHLL.Args_[i];
 
         if(ArgInF.StructByPointer_) {
           // struct is passed trough a pointer
-          AllocaInst* ParamAlloc = easy::GetStructAlloc(B, DL, *Struct, ArgInF.Types_[0]);
+          AllocaInst* ParamAlloc = jitialize::GetStructAlloc(B, DL, *Struct, ArgInF.Types_[0]);
           Args.push_back(ParamAlloc);
         } else {
           // struct is passed by value (may be many values)
@@ -119,7 +119,7 @@ void GetInlineArgs(easy::Context const &C,
 
             Constant* FieldValue;
             size_t RawSize;
-            std::tie(FieldValue, RawSize) = easy::GetConstantFromRaw(DL, FieldTy, (uint8_t const*)RawField);
+            std::tie(FieldValue, RawSize) = jitialize::GetConstantFromRaw(DL, FieldTy, (uint8_t const*)RawField);
 
             Args.push_back(FieldValue);
             RawOffset += RawSize;
@@ -127,21 +127,21 @@ void GetInlineArgs(easy::Context const &C,
         }
       } break;
 
-      case easy::ArgumentBase::AK_Module: {
+      case jitialize::ArgumentBase::AK_Module: {
 
         auto &ArgInF = FHLL.Args_[i];
         assert(ArgInF.Types_.size() == 1);
 
-        easy::Function const &Function = Arg.as<easy::ModuleArgument>()->get();
+        jitialize::Function const &Function = Arg.as<jitialize::ModuleArgument>()->get();
         llvm::Module const& FunctionModule = Function.getLLVMModule();
-        auto FunctionName = easy::GetEntryFunctionName(FunctionModule);
+        auto FunctionName = jitialize::GetEntryFunctionName(FunctionModule);
 
         std::unique_ptr<llvm::Module> LM =
-            easy::CloneModuleWithContext(FunctionModule, Wrapper.getContext());
+            jitialize::CloneModuleWithContext(FunctionModule, Wrapper.getContext());
 
         assert(LM);
 
-        easy::UnmarkEntry(*LM);
+        jitialize::UnmarkEntry(*LM);
 
         llvm::Module* M = Wrapper.getParent();
         if(Linker::linkModules(*M, std::move(LM), Linker::OverrideFromSrc,
@@ -177,7 +177,7 @@ void RemapAttributes(Function const &F, HighLevelLayout const& HLL, Function &Wr
   }
 }
 
-Function* CreateWrapperFun(Module &M, Function &F, HighLevelLayout &HLL, easy::Context const &C) {
+Function* CreateWrapperFun(Module &M, Function &F, HighLevelLayout &HLL, jitialize::Context const &C) {
   LLVMContext &CC = M.getContext();
 
   HighLevelLayout NewHLL(GetNewLayout(C, HLL));
@@ -208,8 +208,8 @@ Function* CreateWrapperFun(Module &M, Function &F, HighLevelLayout &HLL, easy::C
   return Wrapper;
 }
 
-bool easy::InlineParameters::runOnModule(llvm::Module &M) {
-  easy::Context const &C = getAnalysis<ContextAnalysis>().getContext();
+bool jitialize::InlineParameters::runOnModule(llvm::Module &M) {
+  jitialize::Context const &C = getAnalysis<ContextAnalysis>().getContext();
   llvm::Function* F = M.getFunction(TargetName_);
   assert(F);
 
@@ -222,10 +222,10 @@ bool easy::InlineParameters::runOnModule(llvm::Module &M) {
   WrapperFun->setCallingConv(CallingConv::C);
 
   // add metadata to identify the entry function
-  easy::MarkAsEntry(*WrapperFun);
+  jitialize::MarkAsEntry(*WrapperFun);
 
 
   return true;
 }
 
-static RegisterPass<easy::InlineParameters> X("","",false, false);
+static RegisterPass<jitialize::InlineParameters> X("","",false, false);

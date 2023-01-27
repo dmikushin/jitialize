@@ -1,6 +1,6 @@
 // REQUIRES: example 
 // test that it compiles, links and loads correctly.
-// RUN: %bin/easyjit-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
+// RUN: %bin/jitialize-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -10,11 +10,11 @@
 #include <sys/time.h>
 
 // INLINE FROM HERE #INCLUDE_EASY#
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 // TO HERE #INCLUDE_EASY#
 
 // INLINE FROM HERE #INCLUDE_EASY_CACHE#
-#include <easy/code_cache.h>
+#include <jitialize/code_cache.h>
 // TO HERE #INCLUDE_EASY_CACHE#
 
 struct timeval;
@@ -69,7 +69,7 @@ namespace jit {
 static void apply_filter(const char *mask, unsigned mask_size, unsigned mask_area, cv::Mat &image, cv::Mat *&out) {
   using namespace std::placeholders;
 
-  auto kernel_opt = easy::jit(kernel, mask, mask_size, mask_area, _1, _2, image.rows, image.cols, image.channels());
+  auto kernel_opt = jitialize::jit(kernel, mask, mask_size, mask_area, _1, _2, image.rows, image.cols, image.channels());
   kernel_opt(image.ptr(0,0), out->ptr(0,0));
 }
 // TO HERE #EASY#
@@ -81,7 +81,7 @@ namespace cache {
 static void apply_filter(const char *mask, unsigned mask_size, unsigned mask_area, cv::Mat &image, cv::Mat *&out) {
   using namespace std::placeholders;
 
-  static easy::Cache<> cache;
+  static jitialize::Cache<> cache;
   auto const &kernel_opt = cache.jit(kernel, mask, mask_size, mask_area, _1, _2, image.rows, image.cols, image.channels());
   kernel_opt(image.ptr(0,0), out->ptr(0,0));
 }
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
     test = atoi(argv[1]);
 
   std::cerr << "\npress 1, 2, 3, 4 to change the filter.\n"
-               "s to switch the implementation, from original to easy-jit(no cache), and to easy-jit(cache).\n"
+               "s to switch the implementation, from original to jitialize(no cache), and to jitialize(cache).\n"
                "q to exit.\n\n";
 
   int mask_no = 0;
@@ -215,10 +215,10 @@ int main(int argc, char** argv) {
       case 's':
       {
         if(apply_filter == original::apply_filter) {
-          std::cerr << "using easy::jit (no-cache) implementation\n";
+          std::cerr << "using jitialize::jit (no-cache) implementation\n";
           apply_filter = jit::apply_filter;
         } else if (apply_filter == jit::apply_filter) {
-          std::cerr << "using easy::jit (cache) implementation\n";
+          std::cerr << "using jitialize::jit (cache) implementation\n";
           apply_filter = cache::apply_filter;
         } else {
           std::cerr << "using original implementation\n";

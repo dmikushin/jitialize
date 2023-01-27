@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <future>
 #include <functional>
@@ -16,7 +16,7 @@ int add (int a, int b) {
 
 int main() {
   auto inc_future = std::async(std::launch::async,
-                               [](){ return easy::jit(add, _1, 1);});
+                               [](){ return jitialize::jit(add, _1, 1);});
 
   // CHECK: inc(4) is 5
   // CHECK: inc(5) is 6

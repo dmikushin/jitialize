@@ -1,2 +1,2 @@
-install(DIRECTORY easy
+install(DIRECTORY jitialize
         DESTINATION include FILES_MATCHING PATTERN "*.h")

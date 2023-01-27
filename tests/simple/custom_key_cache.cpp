@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/code_cache.h>
+#include <jitialize/code_cache.h>
 
 #include <string>
 #include <functional>
@@ -15,7 +15,7 @@ int add (int a, int b) {
 }
 
 void test_int() {
-  easy::Cache<int> C;
+  jitialize::Cache<int> C;
 
   for(int i = 0; i != 6; ++i) {
     auto const &inc = C.jit(i, add, _1, i);
@@ -37,7 +37,7 @@ void test_int() {
 }
 
 void test_string() {
-  easy::Cache<std::string> C;
+  jitialize::Cache<std::string> C;
 
   for(int i = 0; i != 6; ++i) {
     auto const &inc = C.jit(std::to_string(i), add, _1, i);

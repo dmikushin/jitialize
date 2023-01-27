@@ -1,0 +1,10 @@
+# Try to find the jitialize::jit library, headers and compiler plugin.
+#  Jitialize_INCLUDE_DIRS - the jitialize::jit include directory
+#  Jitialize_LIBRARY_DIRS - library directory needed to use jitialize::jit 
+#  Jitialize_LIBRARY      - library needed to use jitialize::jit 
+#  Jitialize_PLUGIN       - compiler plugin 
+
+set(Jitialize_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+set(Jitialize_LIBRARY_DIRS "@CMAKE_INSTALL_PREFIX@/lib")
+set(Jitialize_LIBRARY "JitializeRuntime")
+set(Jitialize_PLUGIN "@CMAKE_INSTALL_PREFIX@/lib/JitializePass@CMAKE_SHARED_LIBRARY_SUFFIX@")

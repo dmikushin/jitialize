@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/code_cache.h>
+#include <jitialize/code_cache.h>
 
 #include <functional>
 #include <cstdio>
@@ -14,7 +14,7 @@ int add (int a, int b) {
 }
 
 int main() {
-  easy::Cache<> C;
+  jitialize::Cache<> C;
 
   // CHECK: inc(4) is 5
   // CHECK: inc(5) is 6

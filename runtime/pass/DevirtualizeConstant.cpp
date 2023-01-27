@@ -1,5 +1,5 @@
-#include <easy/runtime/RuntimePasses.h>
-#include <easy/runtime/BitcodeTracker.h>
+#include <jitialize/runtime/RuntimePasses.h>
+#include <jitialize/runtime/BitcodeTracker.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Constant.h>
@@ -17,9 +17,9 @@
 
 using namespace llvm;
 
-char easy::DevirtualizeConstant::ID = 0;
+char jitialize::DevirtualizeConstant::ID = 0;
 
-llvm::Pass* easy::createDevirtualizeConstantPass(llvm::StringRef Name) {
+llvm::Pass* jitialize::createDevirtualizeConstantPass(llvm::StringRef Name) {
   return new DevirtualizeConstant(Name);
 }
 
@@ -48,7 +48,7 @@ static ConstantInt* getVTableHostAddress(Value& V) {
 }
 
 static Function* findFunctionAndLinkModules(Module& M, void* HostValue) {
-    auto &BT = easy::BitcodeTracker::GetTracker();
+    auto &BT = jitialize::BitcodeTracker::GetTracker();
     const char* FName = std::get<0>(BT.getNameAndGlobalMapping(HostValue));
 
     if(!FName)
@@ -168,7 +168,7 @@ void RecastCalls(IIter it, IIter end) {
   }
 }
 
-bool easy::DevirtualizeConstant::runOnFunction(llvm::Function &F) {
+bool jitialize::DevirtualizeConstant::runOnFunction(llvm::Function &F) {
 
   if(F.getName() != TargetName_)
     return false;
@@ -180,4 +180,4 @@ bool easy::DevirtualizeConstant::runOnFunction(llvm::Function &F) {
   return false;
 }
 
-static RegisterPass<easy::InlineParameters> X("","",false, false);
+static RegisterPass<jitialize::InlineParameters> X("","",false, false);

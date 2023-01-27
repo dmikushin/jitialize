@@ -1,4 +1,4 @@
-#include <easy/attributes.h>
+#include <jitialize/attributes.h>
 
 #include <llvm/Pass.h>
 #include <llvm/IR/Module.h>
@@ -8,7 +8,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/DebugInfo.h>
 
-#define DEBUG_TYPE "easy-register-layout"
+#define DEBUG_TYPE "jitialize-register-layout"
 #include <llvm/Support/Debug.h>
 
 #include <llvm/Support/raw_ostream.h>
@@ -19,7 +19,7 @@
 
 using namespace llvm;
 
-namespace easy {
+namespace jitialize {
   struct RegisterLayout : public ModulePass {
     static char ID;
 
@@ -172,7 +172,7 @@ namespace easy {
     }
 
     static Function* declareRegisterLayout(Module &M) {
-      StringRef Name = "easy_register_layout";
+      StringRef Name = "jitialize_register_layout";
       if(Function* F = M.getFunction(Name))
         return F;
 

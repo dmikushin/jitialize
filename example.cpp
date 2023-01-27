@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
 #include <functional>
@@ -15,14 +15,14 @@ double add (double a, double b) {
 }
 
 template<class T, class ... Args>
-std::unique_ptr<easy::Function> get_function(easy::Context const &C, T &&Fun) {
-  auto* FunPtr = easy::meta::get_as_pointer(Fun);
-  return easy::Function::Compile(reinterpret_cast<void*>(FunPtr), C);
+std::unique_ptr<jitialize::Function> get_function(jitialize::Context const &C, T &&Fun) {
+  auto* FunPtr = jitialize::meta::get_as_pointer(Fun);
+  return jitialize::Function::Compile(reinterpret_cast<void*>(FunPtr), C);
 }
 
 template<class T, class ... Args>
-std::unique_ptr<easy::Function> EASY_JIT_COMPILER_INTERFACE _jit(T &&Fun, Args&& ... args) {
-  auto C = easy::get_context_for<T, Args...>(std::forward<Args>(args)...);
+std::unique_ptr<jitialize::Function> EASY_JIT_COMPILER_INTERFACE _jit(T &&Fun, Args&& ... args) {
+  auto C = jitialize::get_context_for<T, Args...>(std::forward<Args>(args)...);
   return get_function<T, Args...>(C, std::forward<T>(Fun));
 }
 
@@ -35,7 +35,7 @@ void WriteOptimizedToFile(llvm::Module const &M) {
 }
 
 int main() {
-  std::unique_ptr<easy::Function> CompiledFunction = _jit(add, _1, 1);
+  std::unique_ptr<jitialize::Function> CompiledFunction = _jit(add, _1, 1);
 
   llvm::Module const & M = CompiledFunction->getLLVMModule();
   

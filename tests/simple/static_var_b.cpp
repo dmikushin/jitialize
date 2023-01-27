@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -16,7 +16,7 @@ void add (int b) {
 }
 
 int main() {
-  easy::FunctionWrapper<void()> inc = easy::jit(add, 1);
+  jitialize::FunctionWrapper<void()> inc = jitialize::jit(add, 1);
 
   // CHECK: inc(4) is 5
   // CHECK: inc(5) is 6

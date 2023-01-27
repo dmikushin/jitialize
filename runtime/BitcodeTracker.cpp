@@ -1,16 +1,16 @@
-#include <easy/runtime/BitcodeTracker.h>
+#include <jitialize/runtime/BitcodeTracker.h>
 
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include <easy/exceptions.h>
+#include <jitialize/exceptions.h>
 
-using namespace easy;
+using namespace jitialize;
 using namespace llvm;
 
-namespace easy {
-  DefineEasyException(BitcodeNotRegistered, "Cannot find bitcode.");
-  DefineEasyException(BitcodeParseError, "Cannot parse bitcode for: ");
+namespace jitialize {
+  DefineJitializeException(BitcodeNotRegistered, "Cannot find bitcode.");
+  DefineJitializeException(BitcodeParseError, "Cannot parse bitcode for: ");
 }
 
 BitcodeTracker& BitcodeTracker::GetTracker() {
@@ -23,7 +23,7 @@ bool BitcodeTracker::hasGlobalMapping(void* FPtr) const {
   return InfoPtr != Functions.end();
 }
 
-LayoutInfo const & BitcodeTracker::getLayoutInfo(easy::layout_id id) const {
+LayoutInfo const & BitcodeTracker::getLayoutInfo(jitialize::layout_id id) const {
   auto InfoPair = Layouts.find(id);
   assert(InfoPair != Layouts.end());
   return InfoPair->second;
@@ -39,7 +39,7 @@ void* BitcodeTracker::getAddress(std::string const &Name) {
 std::tuple<const char*, GlobalMapping*> BitcodeTracker::getNameAndGlobalMapping(void* FPtr) {
   auto InfoPtr = Functions.find(FPtr);
   if(InfoPtr == Functions.end()) {
-    throw easy::BitcodeNotRegistered();
+    throw jitialize::BitcodeNotRegistered();
   }
 
   return std::make_tuple(InfoPtr->second.Name, InfoPtr->second.Globals);
@@ -48,7 +48,7 @@ std::tuple<const char*, GlobalMapping*> BitcodeTracker::getNameAndGlobalMapping(
 std::unique_ptr<llvm::Module> BitcodeTracker::getModuleWithContext(void* FPtr, llvm::LLVMContext &C) {
   auto InfoPtr = Functions.find(FPtr);
   if(InfoPtr == Functions.end()) {
-    throw easy::BitcodeNotRegistered();
+    throw jitialize::BitcodeNotRegistered();
   }
 
   auto &Info = InfoPtr->second;
@@ -59,7 +59,7 @@ std::unique_ptr<llvm::Module> BitcodeTracker::getModuleWithContext(void* FPtr, l
       llvm::parseBitcodeFile(Buf->getMemBufferRef(), C);
 
   if (ModuleOrErr.takeError()) {
-    throw easy::BitcodeParseError(Info.Name);
+    throw jitialize::BitcodeParseError(Info.Name);
   }
 
   return std::move(ModuleOrErr.get());
@@ -74,10 +74,10 @@ BitcodeTracker::ModuleContextPair BitcodeTracker::getModule(void* FPtr) {
 
 // function to interface with the generated code
 extern "C" {
-void easy_register(void* FPtr, const char* Name, GlobalMapping* Globals, const char* Bitcode, size_t BitcodeLen) {
+void jitialize_register(void* FPtr, const char* Name, GlobalMapping* Globals, const char* Bitcode, size_t BitcodeLen) {
   BitcodeTracker::GetTracker().registerFunction(FPtr, Name, Globals, Bitcode, BitcodeLen);
 }
-void easy_register_layout(layout_id Id, size_t N) {
+void jitialize_register_layout(layout_id Id, size_t N) {
   BitcodeTracker::GetTracker().registerLayout(Id, N);
 }
 }

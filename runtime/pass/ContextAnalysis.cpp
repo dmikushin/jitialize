@@ -1,12 +1,12 @@
-#include <easy/runtime/RuntimePasses.h>
+#include <jitialize/runtime/RuntimePasses.h>
 
 using namespace llvm;
-using namespace easy;
+using namespace jitialize;
 
-char easy::ContextAnalysis::ID = 0;
+char jitialize::ContextAnalysis::ID = 0;
 
-llvm::Pass* easy::createContextAnalysisPass(easy::Context const &C) {
+llvm::Pass* jitialize::createContextAnalysisPass(jitialize::Context const &C) {
   return new ContextAnalysis(C);
 }
 
-static RegisterPass<easy::ContextAnalysis> X("", "", true, true);
+static RegisterPass<jitialize::ContextAnalysis> X("", "", true, true);

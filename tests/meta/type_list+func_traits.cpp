@@ -1,10 +1,10 @@
 // RUN: %clangxx %cxxflags %include_flags %s -o /dev/null
 
-#include <easy/meta.h>
+#include <jitialize/meta.h>
 #include <type_traits>
 
-using namespace easy;
-using namespace easy::meta;
+using namespace jitialize;
+using namespace jitialize::meta;
 
 int foo(int, bool, float);
 

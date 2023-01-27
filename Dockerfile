@@ -1,4 +1,4 @@
-# Dockerfile derived from easy::jit's .travis.yml
+# Dockerfile derived from jitialize::jit's .travis.yml
 
 FROM ubuntu:latest
 
@@ -30,17 +30,17 @@ RUN apt install python2 -y
 RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 RUN python2 get-pip.py 
 
-COPY . ./easy-just-in-time
+COPY . ./jitialize
 
 # install other deps
-RUN cd easy-just-in-time && pip install --user --upgrade "pip < 21.0"
-RUN cd easy-just-in-time && pip install --user -Iv lit==0.7.0
+RUN cd jitialize && pip install --user --upgrade "pip < 21.0"
+RUN cd jitialize && pip install --user -Iv lit==0.7.0
 
 # compile and test!
-RUN cd easy-just-in-time && \
+RUN cd jitialize && \
   mkdir _build && cd _build && \ 
   git clone --depth=1 https://github.com/google/benchmark.git && git clone --depth=1 https://github.com/google/googletest.git benchmark/googletest
 
-RUN cd easy-just-in-time/_build && mkdir benchmark/_build && cd benchmark/_build && cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=`pwd`/../_install && ninja && ninja install 
-RUN cd easy-just-in-time/_build && cmake -DLLVM_DIR=/usr/lib/llvm-11/cmake -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_C_COMPILER=clang-11 -DEASY_JIT_EXAMPLE=ON -DEASY_JIT_BENCHMARK=ON -DBENCHMARK_DIR=`pwd`/benchmark/_install -DCMAKE_INSTALL_PREFIX=`pwd`/../_install .. -G Ninja
-# RUN cd easy-just-in-time/_build && ninja && ninja install && ninja check && echo ok!
+RUN cd jitialize/_build && mkdir benchmark/_build && cd benchmark/_build && cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=`pwd`/../_install && ninja && ninja install 
+RUN cd jitialize/_build && cmake -DLLVM_DIR=/usr/lib/llvm-11/cmake -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_C_COMPILER=clang-11 -DEASY_JIT_EXAMPLE=ON -DEASY_JIT_BENCHMARK=ON -DBENCHMARK_DIR=`pwd`/benchmark/_install -DCMAKE_INSTALL_PREFIX=`pwd`/../_install .. -G Ninja
+# RUN cd jitialize/_build && ninja && ninja install && ninja check && echo ok!

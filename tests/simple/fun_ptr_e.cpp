@@ -3,8 +3,8 @@
 // RUN: %FileCheck %s < %t.out
 // RUN: %FileCheck --check-prefix=CHECK-IR %s < %t.ll
 
-#include <easy/jit.h>
-#include <easy/options.h>
+#include <jitialize/jit.h>
+#include <jitialize/options.h>
 
 #include <functional>
 #include <cstdio>
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
   come_and_get_some[0] = foo;
   come_and_get_some[1] = bar;
 
-  easy::FunctionWrapper<void(void*, unsigned, unsigned)> map_w = easy::jit(map, _1, _2, _3, come_and_get_some[argc?1:0], easy::options::dump_ir(argv[1]));
+  jitialize::FunctionWrapper<void(void*, unsigned, unsigned)> map_w = jitialize::jit(map, _1, _2, _3, come_and_get_some[argc?1:0], jitialize::options::dump_ir(argv[1]));
 
   int data[] = {1,2,3,4};
   map_w(data, sizeof(data)/sizeof(data[0]), sizeof(data[0]));

@@ -9,7 +9,7 @@
 // CHECK-IR: define 
 // CHECK-IR-NOT: define 
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -38,14 +38,14 @@ int main(int argc, char** argv) {
     vec.emplace_back(atoi(argv[i+2]));
 
   // generate code
-  easy::FunctionWrapper<int(int)> mul_by_two = easy::jit(mul, _1, 2);
+  jitialize::FunctionWrapper<int(int)> mul_by_two = jitialize::jit(mul, _1, 2);
 
-  static_assert(easy::is_function_wrapper<decltype(mul_by_two)>::value, "Value not detected as function wrapper!");
-  static_assert(easy::is_function_wrapper<decltype(mul_by_two)&>::value, "Reference not detected as function wrapper!");
-  static_assert(easy::is_function_wrapper<decltype(mul_by_two)&&>::value, "RReference not detected as function wrapper!");
+  static_assert(jitialize::is_function_wrapper<decltype(mul_by_two)>::value, "Value not detected as function wrapper!");
+  static_assert(jitialize::is_function_wrapper<decltype(mul_by_two)&>::value, "Reference not detected as function wrapper!");
+  static_assert(jitialize::is_function_wrapper<decltype(mul_by_two)&&>::value, "RReference not detected as function wrapper!");
 
-  easy::FunctionWrapper<int(std::vector<int> const&)> mul_vector_by_two = easy::jit(accumulate, _1, 0, mul_by_two, 
-                                                                                    easy::options::dump_ir(argv[argc-1]));
+  jitialize::FunctionWrapper<int(std::vector<int> const&)> mul_vector_by_two = jitialize::jit(accumulate, _1, 0, mul_by_two, 
+                                                                                    jitialize::options::dump_ir(argv[argc-1]));
 
   // kernel!
   int result = mul_vector_by_two(vec);

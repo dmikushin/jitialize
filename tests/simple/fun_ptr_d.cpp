@@ -3,8 +3,8 @@
 // RUN: %FileCheck %s < %t.out
 // RUN: %FileCheck --check-prefix=CHECK-IR %s < %t.ll
 
-#include <easy/jit.h>
-#include <easy/options.h>
+#include <jitialize/jit.h>
+#include <jitialize/options.h>
 
 #include <functional>
 #include <cstdio>
@@ -36,7 +36,7 @@ static int add (int a, int (*f)()) {
 }
 
 int main(int argc, char** argv) {
-  easy::FunctionWrapper<int(int)> inc = easy::jit(add, _1, argc?bubu:bibi, easy::options::dump_ir(argv[1]));
+  jitialize::FunctionWrapper<int(int)> inc = jitialize::jit(add, _1, argc?bubu:bibi, jitialize::options::dump_ir(argv[1]));
 
   // CHECK: inc(4) is 4
   // CHECK: inc(5) is 6

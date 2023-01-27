@@ -1,13 +1,13 @@
 #ifndef PARAM
 #define PARAM
 
-#include <easy/runtime/Context.h>
-#include <easy/function_wrapper.h>
-#include <easy/options.h>
-#include <easy/meta.h>
-#include <easy/attributes.h>
+#include <jitialize/runtime/Context.h>
+#include <jitialize/function_wrapper.h>
+#include <jitialize/options.h>
+#include <jitialize/meta.h>
+#include <jitialize/attributes.h>
 
-namespace easy {
+namespace jitialize {
 
 namespace layout {
 
@@ -27,7 +27,7 @@ namespace layout {
   }
 
   template<class Arg>
-  void set_layout(easy::Context &C) {
+  void set_layout(jitialize::Context &C) {
     C.setArgumentLayout(get_layout<Arg>());
   }
 }
@@ -64,9 +64,9 @@ struct set_parameter_helper {
 
   template<class Param, class Arg>
   static void set_param(Context &C,
-                        _if<easy::is_function_wrapper<Arg>::value, Arg> &&arg) {
+                        _if<jitialize::is_function_wrapper<Arg>::value, Arg> &&arg) {
     static_assert(function_wrapper_specialization_is_possible<Param, Arg>::value,
-                  "easy::jit composition is not possible. Incompatible types.");
+                  "jitialize::jit composition is not possible. Incompatible types.");
     C.setParameterModule(arg.getFunction());
   }
 };
@@ -115,7 +115,7 @@ template<class Param, class Arg>
 struct set_parameter {
 
   static constexpr bool is_ph = std::is_placeholder<std::decay_t<Arg>>::value;
-  static constexpr bool is_fw = easy::is_function_wrapper<Arg>::value;
+  static constexpr bool is_fw = jitialize::is_function_wrapper<Arg>::value;
   static constexpr bool is_special = is_ph || is_fw;
 
   using help = set_parameter_helper<is_special>;
@@ -132,7 +132,7 @@ template<class Option0, class ... Options>
 void set_options(Context &C, Option0&& Opt, Options&& ... Opts) {
   using OptTy = std::decay_t<Option0>;
   OptTy& OptRef = std::ref<OptTy>(Opt);
-  static_assert(options::is_option<OptTy>::value, "An easy::jit option is expected");
+  static_assert(options::is_option<OptTy>::value, "An jitialize::jit option is expected");
 
   OptRef.handle(C);
   set_options(C, std::forward<Options>(Opts)...);

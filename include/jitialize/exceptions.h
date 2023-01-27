@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-namespace easy {
+namespace jitialize {
   struct exception
       : public std::runtime_error {
     exception(std::string const &Message, std::string const &Reason)
@@ -14,10 +14,10 @@ namespace easy {
   };
 }
 
-#define DefineEasyException(Exception, Message) \
-  struct Exception : public easy::exception { \
-    Exception() : easy::exception(Message, "") {} \
-    Exception(std::string const &Reason) : easy::exception(Message, Reason) {} \
+#define DefineJitializeException(Exception, Message) \
+  struct Exception : public jitialize::exception { \
+    Exception() : jitialize::exception(Message, "") {} \
+    Exception(std::string const &Reason) : jitialize::exception(Message, Reason) {} \
     virtual ~Exception() = default; \
   }
 

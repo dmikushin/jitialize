@@ -2,7 +2,7 @@
 // RUN: %t > %t.out
 // RUN: %FileCheck %s < %t.out
 
-#include <easy/jit.h>
+#include <jitialize/jit.h>
 
 #include <functional>
 #include <cstdio>
@@ -19,7 +19,7 @@ int add (Point a, Point b) {
 }
 
 int main() {
-  easy::FunctionWrapper<int(Point)> inc = easy::jit(add, _1, Point{1,1});
+  jitialize::FunctionWrapper<int(Point)> inc = jitialize::jit(add, _1, Point{1,1});
 
   // CHECK: inc(4,4) is 10
   // CHECK: inc(5,5) is 12

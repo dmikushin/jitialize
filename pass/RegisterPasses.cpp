@@ -5,11 +5,11 @@
 #include <llvm/Support/raw_ostream.h>
 
 using namespace llvm;
-using namespace easy;
+using namespace jitialize;
 
 static void callback(const PassManagerBuilder &,
                      legacy::PassManagerBase &PM) {
-  PM.add(easy::createRegisterBitcodePass());
+  PM.add(jitialize::createRegisterBitcodePass());
 }
 
 RegisterStandardPasses Register(PassManagerBuilder::EP_OptimizerLast, callback);
