@@ -26,8 +26,6 @@ message(STATUS "LLVM Include dirs: ${LLVM_INCLUDE_DIRS}")
 
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(AddLLVM)
-set(Python_FIND_VERSION 3)
-include(Python)
 
 add_definitions(${LLVM_DEFINITIONS})
 include_directories(${LLVM_INCLUDE_DIRS})
@@ -57,5 +55,15 @@ add_subdirectory(benchmark)
 
 add_custom_target(jitialize-core DEPENDS JitializePass JitializeRuntime)
 
-include(CMakeTests.txt)
+include(Python)
+find_python_module(lit REQUIRED)
+
+set(ALL_TESTS tests/)
+
+add_custom_target(check
+    COMMAND ${Python3_EXECUTABLE} -m lit.main ${ALL_TESTS} -v --shuffle
+    DEPENDS JitializePass JitializeRuntime)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/lit.cfg")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/doc/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/doc/lit.cfg")
 

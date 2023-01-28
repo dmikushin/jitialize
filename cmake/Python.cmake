@@ -1,21 +1,6 @@
 include(FindPackageHandleStandardArgs)
 
-# allow specifying which Python installation to use
-if (NOT PYTHON_EXEC)
-  set(PYTHON_EXEC $ENV{PYTHON_EXEC})
-endif (NOT PYTHON_EXEC)
-
-if (NOT PYTHON_EXEC)
-  find_program(PYTHON_EXEC "python${Python_FIND_VERSION}" 
-               DOC "Location of python executable to use")
-endif(NOT PYTHON_EXEC)
-
-execute_process(COMMAND "${PYTHON_EXEC}" "-c"
-"import sys; print('%d.%d' % (sys.version_info[0],sys.version_info[1]))"
-OUTPUT_VARIABLE PYTHON_VERSION
-OUTPUT_STRIP_TRAILING_WHITESPACE)
-# string(REPLACE "." "" PYTHON_VERSION_NO_DOTS ${PYTHON_VERSION})
-
+find_package(Python3 COMPONENTS Interpreter)
 
 function(find_python_module module)
   string(TOUPPER ${module} module_upper)
@@ -23,8 +8,8 @@ function(find_python_module module)
     if(ARGC GREATER 1 AND ARGV1 STREQUAL "REQUIRED")
       set(${module}_FIND_REQUIRED TRUE)
     endif()
-  # A module's location is usually a directory, but for binary modules it's a .so file.
-    execute_process(COMMAND "${PYTHON_EXEC}" "-c" "import re, ${module}; print re.compile('/__init__.py.*').sub('',${module}.__file__)"
+    # A module's location is usually a directory, but for binary modules it's a .so file.
+    execute_process(COMMAND "${Python3_EXECUTABLE}" "-c" "import re, ${module}; print(re.compile('/__init__.py.*').sub('',${module}.__file__))"
                     RESULT_VARIABLE _${module}_status 
                     OUTPUT_VARIABLE _${module}_location
                     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
