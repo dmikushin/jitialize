@@ -42,5 +42,5 @@ RUN cd jitialize && \
   git clone --depth=1 https://github.com/google/benchmark.git && git clone --depth=1 https://github.com/google/googletest.git benchmark/googletest
 
 RUN cd jitialize/_build && mkdir benchmark/_build && cd benchmark/_build && cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=`pwd`/../_install && ninja && ninja install 
-RUN cd jitialize/_build && cmake -DLLVM_DIR=/usr/lib/llvm-11/cmake -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_C_COMPILER=clang-11 -DEASY_JIT_EXAMPLE=ON -DEASY_JIT_BENCHMARK=ON -DBENCHMARK_DIR=`pwd`/benchmark/_install -DCMAKE_INSTALL_PREFIX=`pwd`/../_install .. -G Ninja
+RUN cd jitialize/_build && cmake -DLLVM_DIR=/usr/lib/llvm-11/cmake -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_C_COMPILER=clang-11 -DJITIALIZE_EXAMPLE=ON -DJITIALIZE_BENCHMARK=ON -DBENCHMARK_DIR=`pwd`/benchmark/_install -DCMAKE_INSTALL_PREFIX=`pwd`/../_install .. -G Ninja
 # RUN cd jitialize/_build && ninja && ninja install && ninja check && echo ok!

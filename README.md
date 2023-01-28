@@ -23,23 +23,23 @@ cmake --build .
 ## Example usage
 
 To build the examples, install the [opencv](https://opencv.org/) library, 
-and add the flag `-DEASY_JIT_EXAMPLE=1` to the CMake command:
+and add the flag `-DJITIALIZE_EXAMPLE=1` to the CMake command:
 
 ```bash
 sudo apt install libopencv-dev
 cd build
-cmake -DEASY_JIT_EXAMPLE=ON ..
+cmake -DJITIALIZE_EXAMPLE=ON ..
 make
 bin/jitialize-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
 ```
 
 ## Benchmarking
 
-To enable benchmarking, add the flag `-DEASY_JIT_BENCHMARK=1` to the CMake command:
+To enable benchmarking, add the flag `-DJITIALIZE_BENCHMARK=1` to the CMake command:
 
 ```bash
 cd build
-cmake -DEASY_JIT_BENCHMARK=ON ..
+cmake -DJITIALIZE_BENCHMARK=ON ..
 make
 bin/jitialize-benchmark
 ```
@@ -148,11 +148,11 @@ functions.
 Jitialize does an effort to deduce which functions are specialized at runtime,
 still in many cases this is not possible.
 
-In this case, it's possible to use the `EASY_JIT_EXPOSE` macro, as shown in
+In this case, it's possible to use the `JITIALIZE_EXPOSE` macro, as shown in
 the following code,
 
 ```cpp
-void EASY_JIT_EXPOSE kernel() { /* ... */ }
+void JITIALIZE_EXPOSE kernel() { /* ... */ }
 ```
 
 or using a regular expression during compilation.
@@ -187,8 +187,8 @@ static void apply_filter(const char *mask, unsigned mask_size, unsigned mask_are
 
 ## Talks 
  
-* [Jitialize at EuroLLVM'18](https://www.youtube.com/watch?v=sFxqI6Z_bhE)
-* [Jitialize at FOSDEM'18](https://www.youtube.com/watch?v=5_rydTiB32I)
+* [Easy::jit at EuroLLVM'18](https://www.youtube.com/watch?v=sFxqI6Z_bhE)
+* [Easy::jit at FOSDEM'18](https://www.youtube.com/watch?v=5_rydTiB32I)
 
 
 ## License

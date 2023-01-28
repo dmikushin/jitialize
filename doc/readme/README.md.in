@@ -29,10 +29,10 @@ cmake --build .
 ```
 
 To build the examples, install the [opencv](https://opencv.org/) library, 
-and add the flags ```-DEASY_JIT_EXAMPLE=1``` to the cmake command.
+and add the flags ```-DJITIALIZE_EXAMPLE=1``` to the cmake command.
 
 To enable benchmarking, install the [google benchmark](https://github.com/google/benchmark) framework, 
-and add the flags ```-DEASY_JIT_BENCHMARK=1 -DBENCHMARK_DIR=<path_to_google_benchmark_install>``` to the cmake command.
+and add the flags ```-DJITIALIZE_BENCHMARK=1 -DBENCHMARK_DIR=<path_to_google_benchmark_install>``` to the cmake command.
 
 Everything is ready to go!
 
@@ -93,14 +93,14 @@ of the library is exported. This function is called -- guess how? -- ```jitializ
 We add the corresponding include directive them in the top of the file.
 
 ```cpp
-</include camfilter.cpp INCLUDE_EASY/>
+</include camfilter.cpp INCLUDE_JITIALIZE/>
 ```
 
 With the call to ```jitialize::jit```, we specialize the function and obtain a new
 one taking only two parameters (the input and the output frame).
 
 ```cpp
-</include camfilter.cpp EASY/>
+</include camfilter.cpp JITIALIZE/>
 ```
 
 #### Deducing which functions to expose at runtime
@@ -112,11 +112,11 @@ functions.
 Jitialize does an effort to deduce which functions are specialized at runtime,
 still in many cases this is not possible.
 
-In this case, it's possible to use the ```EASY_JIT_EXPOSE``` macro, as shown in
+In this case, it's possible to use the ```JITIALIZE_EXPOSE``` macro, as shown in
 the following code,
 
 ```cpp
-void EASY_JIT_EXPOSE kernel() { /* ... */ }
+void JITIALIZE_EXPOSE kernel() { /* ... */ }
 ```
 
 or using a regular expression during compilation.
@@ -135,11 +135,11 @@ generated.
 Bellow we show the code from previous section, but adapted to use a code cache.
 
 ```cpp
-</include camfilter.cpp INCLUDE_EASY_CACHE/>
+</include camfilter.cpp INCLUDE_JITIALIZE_CACHE/>
 ```
 
 ```cpp
-</include camfilter.cpp EASY_CACHE/>
+</include camfilter.cpp JITIALIZE_CACHE/>
 ```
 
 License

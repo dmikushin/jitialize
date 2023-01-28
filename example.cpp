@@ -21,7 +21,7 @@ std::unique_ptr<jitialize::Function> get_function(jitialize::Context const &C, T
 }
 
 template<class T, class ... Args>
-std::unique_ptr<jitialize::Function> EASY_JIT_COMPILER_INTERFACE _jit(T &&Fun, Args&& ... args) {
+std::unique_ptr<jitialize::Function> JITIALIZE_COMPILER_INTERFACE _jit(T &&Fun, Args&& ... args) {
   auto C = jitialize::get_context_for<T, Args...>(std::forward<Args>(args)...);
   return get_function<T, Args...>(C, std::forward<T>(Fun));
 }

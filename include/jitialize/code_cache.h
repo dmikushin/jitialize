@@ -40,13 +40,13 @@ class Cache : public CacheBase<Key> {
   public:
 
   template<class T, class ... Args>
-  auto const& EASY_JIT_COMPILER_INTERFACE jit(Key const &K, T &&Fun, Args&& ... args) {
+  auto const& JITIALIZE_COMPILER_INTERFACE jit(Key const &K, T &&Fun, Args&& ... args) {
     auto CacheEntry = CacheBase<Key>::Cache_.emplace(K, FunctionWrapperBase());
     return CacheBase<Key>::compile_if_not_in_cache(CacheEntry, std::forward<T>(Fun), std::forward<Args>(args)...);
   }
 
   template<class T, class ... Args>
-  auto const& EASY_JIT_COMPILER_INTERFACE jit(Key &&K, T &&Fun, Args&& ... args) {
+  auto const& JITIALIZE_COMPILER_INTERFACE jit(Key &&K, T &&Fun, Args&& ... args) {
     auto CacheEntry = CacheBase<Key>::Cache_.emplace(K, FunctionWrapperBase());
     return CacheBase<Key>::compile_if_not_in_cache(CacheEntry, std::forward<T>(Fun), std::forward<Args>(args)...);
   }
@@ -63,7 +63,7 @@ class Cache<AutoKey> : public CacheBase<AutoKey> {
   public:
 
   template<class T, class ... Args>
-  auto const& EASY_JIT_COMPILER_INTERFACE jit(T &&Fun, Args&& ... args) {
+  auto const& JITIALIZE_COMPILER_INTERFACE jit(T &&Fun, Args&& ... args) {
     void* FunPtr = reinterpret_cast<void*>(meta::get_as_pointer(Fun));
     auto CacheEntry =
         CacheBase<Key>::Cache_.emplace(

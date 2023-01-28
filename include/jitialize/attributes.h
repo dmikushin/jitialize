@@ -7,13 +7,13 @@
 
 // mark functions in the jitialize::jit interface as no inline.
 // it's easier for the pass to find the original functions to be jitted.
-#define EASY_JIT_COMPILER_INTERFACE \
+#define JITIALIZE_COMPILER_INTERFACE \
   __attribute__((noinline)) __attribute__((section(CI_SECTION)))
 
-#define EASY_JIT_EXPOSE \
+#define JITIALIZE_EXPOSE \
   __attribute__((section(JIT_SECTION)))
 
-#define EASY_JIT_LAYOUT\
+#define JITIALIZE_LAYOUT\
   __attribute__((section(LAYOUT_SECTION)))
 
 #endif // NOINLINE

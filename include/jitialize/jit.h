@@ -1,5 +1,5 @@
-#ifndef EASY
-#define EASY
+#ifndef JITIALIZE
+#define JITIALIZE
 
 #include <jitialize/runtime/Context.h>
 #include <jitialize/attributes.h>
@@ -74,13 +74,13 @@ jitialize::Context get_context_for(Args&& ... args) {
 }
 
 template<class T, class ... Args>
-auto EASY_JIT_COMPILER_INTERFACE jit(T &&Fun, Args&& ... args) {
+auto JITIALIZE_COMPILER_INTERFACE jit(T &&Fun, Args&& ... args) {
   auto C = get_context_for<T, Args...>(std::forward<Args>(args)...);
   return jit_with_context<T, Args...>(C, std::forward<T>(Fun));
 }
 
 template<typename T, typename... Args>
-std::unique_ptr<llvm::Module> EASY_JIT_COMPILER_INTERFACE get_module(llvm::LLVMContext& ctx, T&& fn, Args&&... args)
+std::unique_ptr<llvm::Module> JITIALIZE_COMPILER_INTERFACE get_module(llvm::LLVMContext& ctx, T&& fn, Args&&... args)
 {
     auto &BT = BitcodeTracker::GetTracker();
     auto* fn_ptr = reinterpret_cast<void*>(meta::get_as_pointer(fn));

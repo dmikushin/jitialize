@@ -1,10 +1,10 @@
-option(EASY_JIT_EXAMPLE "Build Examples" OFF)
+option(JITIALIZE_EXAMPLE "Build Examples" OFF)
 
-if(EASY_JIT_EXAMPLE)
+if(JITIALIZE_EXAMPLE)
     find_package(OpenCV REQUIRED)
 
     set(CMAKE_CXX_COMPILER ${LLVM_TOOLS_BINARY_DIR}/clang++)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -disable-O0-optnone -Xclang -load -Xclang ${EASY_JIT_PASS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -disable-O0-optnone -Xclang -load -Xclang ${JITIALIZE_PASS}")
 
     add_executable(jitialize-example camfilter.cpp)
     add_dependencies(jitialize-example jitialize-core)

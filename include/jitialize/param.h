@@ -16,7 +16,7 @@ namespace layout {
   char* serialize_arg(Arg);
 
   template<class Arg>
-  layout_id  __attribute__((noinline)) EASY_JIT_LAYOUT get_layout() {
+  layout_id  __attribute__((noinline)) JITIALIZE_LAYOUT get_layout() {
     // horrible hack to get the ptr of get_struct_layout_internal<Arg> as void*
     union {
       void* as_void_ptr;
