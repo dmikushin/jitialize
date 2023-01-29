@@ -58,10 +58,10 @@ add_custom_target(jitialize-core DEPENDS JitializePass JitializeRuntime)
 include(Python)
 find_python_module(lit REQUIRED)
 
-set(ALL_TESTS tests/)
+set(ALL_TESTS ${CMAKE_CURRENT_BINARY_DIR}/tests/)
 
 add_custom_target(check
-    COMMAND ${Python3_EXECUTABLE} -m lit.main ${ALL_TESTS} -v --shuffle
+    COMMAND lit ${ALL_TESTS} -v --shuffle
     DEPENDS JitializePass JitializeRuntime)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/lit.cfg")
