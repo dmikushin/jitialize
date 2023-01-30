@@ -1,7 +1,3 @@
-// REQUIRES: example 
-// test that it compiles, links and loads correctly.
-// RUN: %bin/jitialize-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
-
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <numeric>

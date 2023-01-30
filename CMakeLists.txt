@@ -50,7 +50,7 @@ add_subdirectory(cmake)
 add_subdirectory(include)
 add_subdirectory(pass)
 add_subdirectory(runtime)
-add_subdirectory(doc)
+add_subdirectory(example)
 add_subdirectory(benchmark)
 
 add_custom_target(jitialize-core DEPENDS JitializePass JitializeRuntime)
@@ -65,5 +65,4 @@ add_custom_target(check
     DEPENDS JitializePass JitializeRuntime)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/lit.cfg")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/doc/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/doc/lit.cfg")
 

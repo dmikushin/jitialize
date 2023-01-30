@@ -47,6 +47,9 @@ config.substitutions.append(('%not', "!"))
 
 config.substitutions.append(('%FileCheck', os.path.join("@LLVM_TOOLS_BINARY_DIR@", "FileCheck")))
 
+if "@JITIALIZE_EXAMPLE@" in ["1", "ON"] :
+   config.available_features.add('example')
+
 if "@JITIALIZE_BENCHMARK@" in ["1", "ON"] :
   config.available_features.add('benchmark')
 

@@ -1,0 +1,2 @@
+REQUIRES: example
+RUN: %bin/jitialize-example 1 1 2 3 4 s 1 2 3 4 s 1 2 3 4 q
