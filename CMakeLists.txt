@@ -66,3 +66,8 @@ add_custom_target(check
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/lit.cfg.in" "${CMAKE_CURRENT_BINARY_DIR}/tests/lit.cfg")
 
+add_custom_target(docker
+    COMMAND docker build -f ${CMAKE_CURRENT_SOURCE_DIR}/docker/Dockerfile -t ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/docker
+    COMMAND docker run -it --rm --user "${UID}:${GID}" -v${CMAKE_CURRENT_SOURCE_DIR}:/project ${PROJECT_NAME} sh /project/docker/scripts/build.sh
+    COMMENT "Building ${PROJECT_NAME} in a Docker container")
+

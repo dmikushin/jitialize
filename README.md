@@ -46,15 +46,26 @@ bin/jitialize-benchmark
 ```
 
 ## Docker
-
-If you want to give only a quick test to the project, everything is provided to use it with docker.
-To do this, generate a Dockerfile from the current directory using the scripts in `<path_to_jitialize_src>/misc/docker`, 
-then generate your docker instance.
-
+ 
+Prepare a Docker with clang:
+ 
 ```bash
-python3 <path_to_jitialize_src>/misc/docker/GenDockerfile.py  <path_to_jitialize_src>/.travis.yml > Dockerfile
-docker build -t jitialize/test -f Dockerfile
-docker run -ti jitialize/test /bin/bash
+./docker/build_docker_image.sh \
+    -s jammy -d clang12-ubuntu -t "release" \
+    --branch release/12.x \
+    -p clang \
+    -i install \
+    -- \
+    -DLLVM_TARGETS_TO_BUILD=host \
+    -DCMAKE_BUILD_TYPE=Release
+```
+
+You can change to `-DCMAKE_BUILD_TYPE=Debug` to compile Clang with debug information, which is very handy for development.
+
+Finally, build Jitialize in the Docker container prepared above:
+
+```
+cmake --build . --target docker
 ```
 
 ## Guidelines
