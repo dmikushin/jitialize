@@ -18,6 +18,7 @@ RUN apt-get update && \
         unzip cmake \
         libz-dev \
         libxml2-dev \
+        libopencv-dev \
         python3-pip \
         python3-setuptools \
         python3-wheel && \
